@@ -105,7 +105,7 @@ DARKTABLE_TIFF_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:operation="basecurve"
       darktable:enabled="1"
       darktable:modversion="5"
-      darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpCFxCkAdoEQ3Q=="
+      darktable:params="gz09eJxjYIAAruuLrbmuK1vPmilpN2vmTLuzZ87YGRsb2zMwONgbGxcD6QYoHgVDCbAhsZkwZCFxCgBDtg6p"
       darktable:multi_name=""
       darktable:multi_priority="0"
       darktable:blendop_version="7"
