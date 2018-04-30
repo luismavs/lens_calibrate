@@ -362,12 +362,15 @@ def parse_lenses_config(filename):
 
     return lenses
 
-def tca_correct(input_file, original_file, exif_data):
+def tca_correct(input_file, original_file, exif_data, complex_tca=False):
     output_file = ("%s.tca" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
         print("Running TCA corrections for %s ..." % (input_file), end='')
-        cmd = [ "tca_correct", "-o", "bv", input_file ]
+        tca_complexity = 'v'
+        if complex_tca:
+            tca_complexity = 'bv'
+        cmd = [ "tca_correct", "-o", tca_complexity, input_file ]
         try:
             output = subprocess.check_output(cmd, stderr=DEVNULL)
         except subprocess.CalledProcessError:
@@ -382,6 +385,7 @@ def tca_correct(input_file, original_file, exif_data):
         tca_config = configparser.ConfigParser()
         tca_config[exif_data['lens_model']] = {
                 'focal_length' : exif_data['focal_length'],
+                'complex_tca' : complex_tca,
                 'tca' : output.decode('ascii'),
                 'br' : tca_data['br'],
                 'vr' : tca_data['vr'],
@@ -569,7 +573,7 @@ def run_distortion():
 
         create_lenses_config(sorted_lenses_exif_group)
 
-def run_tca():
+def run_tca(complex_tca):
     if not os.path.isdir("tca/exported"):
         os.mkdir("tca/exported")
 
@@ -586,7 +590,7 @@ def run_tca():
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
             output_file = convert_raw_to_ppm(input_file, output_file)
 
-            tca_correct(output_file, input_file, exif_data)
+            tca_correct(output_file, input_file, exif_data, complex_tca)
 
 def run_vignetting():
     if not os.path.isdir("vignetting/exported"):
@@ -686,9 +690,14 @@ def run_generate_xml():
         # Add tca entries
         for focal_length in lenses[lens]['tca']:
             data = lenses[lens]['tca'][focal_length]
-            f.write('           '
-                    '<tca model="poly3" focal="%s" vr="%s" vb="%s" />\n' %
-                    (focal_length, data['vr'], data['vb']))
+            if data['complex_tca'] == 'True':
+                f.write('           '
+                        '<tca model="poly3" focal="%s" br="%s" vr="%s" bb="%s" vb="%s" />\n' %
+                        (focal_length, data['br'], data['vr'], data['bb'], data['vb']))
+            else:
+                f.write('           '
+                        '<tca model="poly3" focal="%s" vr="%s" vb="%s" />\n' %
+                        (focal_length, data['vr'], data['vb']))
 
         # Add vignetting entries
         for focal_length in lenses[lens]['vignetting']:
@@ -712,10 +721,18 @@ def main():
 
     parser = argparse.ArgumentParser(description=description)
 
+    parser.add_argument('--complex-tca',
+                        action='store_true',
+                        help='Turns on non-linear polynomials for TCA')
     #parser.add_argument('-r, --rawconverter', choices=['darktable', 'dcraw'])
 
     parser.add_argument('action',
-                        choices=['init', 'distortion', 'tca', 'vignetting', 'generate_xml'])
+                        choices=[
+                            'init',
+                            'distortion',
+                            'tca',
+                            'vignetting',
+                            'generate_xml'])
 
     args = parser.parse_args()
 
@@ -724,7 +741,7 @@ def main():
     elif args.action == 'distortion':
         run_distortion()
     elif args.action == 'tca':
-        run_tca()
+        run_tca(args.complex_tca)
     elif args.action == 'vignetting':
         run_vignetting()
     elif args.action == 'generate_xml':
