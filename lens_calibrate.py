@@ -47,7 +47,7 @@ import gi
 gi.require_version('GExiv2', '0.10')
 from gi.repository.GExiv2 import Metadata
 
-DARKTABLE_TIFF_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
+DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
@@ -237,7 +237,7 @@ def image_read_exif(filename):
     return { "lens_model" : lens_model, "focal_length" : focal_length, "aperture" : aperture }
 
 # convert raw file to 16bit tiff
-def convert_raw_to_tiff(input_file, output_file=None):
+def convert_raw_for_distortion(input_file, output_file=None):
     if output_file is None:
         output_file = ("%s.tif" % os.path.splitext(input_file)[0])
     sidecar_file = (os.path.join(os.path.dirname(output_file), "distortion.xmp"))
@@ -245,7 +245,7 @@ def convert_raw_to_tiff(input_file, output_file=None):
     if not os.path.isfile(sidecar_file):
         f = open(sidecar_file, 'w')
         try:
-            f.write(DARKTABLE_TIFF_SIDECAR)
+            f.write(DARKTABLE_DISTORTION_SIDECAR)
         finally:
             f.close()
 
