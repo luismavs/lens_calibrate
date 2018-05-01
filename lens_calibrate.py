@@ -663,56 +663,59 @@ def run_generate_xml():
 
     f = open('lensfun.xml', 'w')
     # write lenses to xml
-    for lens in lenses:
-        f.write('    <lens>\n')
-        f.write('        <maker>%s</maker>\n' % lenses[lens]['maker'])
-        f.write('        <model>%s</model>\n' % lens)
-        f.write('        <mount>%s</mount>\n' % lenses[lens]['mount'])
-        f.write('        <cropfactor>%s</cropfactor>\n' % lenses[lens]['cropfactor'])
-        if lenses[lens]['type'] != 'normal':
-            f.write('        <type>%s</type>\n' % lenses[lens]['type'])
+    try:
+        f.write('<lensdatabase>\n')
+        for lens in lenses:
+            f.write('    <lens>\n')
+            f.write('        <maker>%s</maker>\n' % lenses[lens]['maker'])
+            f.write('        <model>%s</model>\n' % lens)
+            f.write('        <mount>%s</mount>\n' % lenses[lens]['mount'])
+            f.write('        <cropfactor>%s</cropfactor>\n' % lenses[lens]['cropfactor'])
+            if lenses[lens]['type'] != 'normal':
+                f.write('        <type>%s</type>\n' % lenses[lens]['type'])
 
-        # Add calibration data
-        f.write('        <calibration>\n')
+            # Add calibration data
+            f.write('        <calibration>\n')
 
-        # Add distortion entries
-        for focal_length in lenses[lens]['distortion']:
-            data = list(map(str.strip, lenses[lens]['distortion'][focal_length].split(',')))
-            if data[1] is None:
-                f.write('           '
-                        '<distortion model="poly3" focal="%s" k1="%s" />\n' %
-                        (focal_length, data[0]))
-            else:
-                f.write('           '
-                        '<distortion model="ptlens" focal="%s" a="%s" b="%s" c="%s" />\n' %
-                        (focal_length, data[0], data[1], data[2]))
+            # Add distortion entries
+            for focal_length in lenses[lens]['distortion']:
+                data = list(map(str.strip, lenses[lens]['distortion'][focal_length].split(',')))
+                if data[1] is None:
+                    f.write('           '
+                            '<distortion model="poly3" focal="%s" k1="%s" />\n' %
+                            (focal_length, data[0]))
+                else:
+                    f.write('           '
+                            '<distortion model="ptlens" focal="%s" a="%s" b="%s" c="%s" />\n' %
+                            (focal_length, data[0], data[1], data[2]))
 
-        # Add tca entries
-        for focal_length in lenses[lens]['tca']:
-            data = lenses[lens]['tca'][focal_length]
-            if data['complex_tca'] == 'True':
-                f.write('           '
-                        '<tca model="poly3" focal="%s" br="%s" vr="%s" bb="%s" vb="%s" />\n' %
-                        (focal_length, data['br'], data['vr'], data['bb'], data['vb']))
-            else:
-                f.write('           '
-                        '<tca model="poly3" focal="%s" vr="%s" vb="%s" />\n' %
-                        (focal_length, data['vr'], data['vb']))
+            # Add tca entries
+            for focal_length in lenses[lens]['tca']:
+                data = lenses[lens]['tca'][focal_length]
+                if data['complex_tca'] == 'True':
+                    f.write('           '
+                            '<tca model="poly3" focal="%s" br="%s" vr="%s" bb="%s" vb="%s" />\n' %
+                            (focal_length, data['br'], data['vr'], data['bb'], data['vb']))
+                else:
+                    f.write('           '
+                            '<tca model="poly3" focal="%s" vr="%s" vb="%s" />\n' %
+                            (focal_length, data['vr'], data['vb']))
 
-        # Add vignetting entries
-        for focal_length in lenses[lens]['vignetting']:
-            data = lenses[lens]['vignetting'][focal_length]
-            for distance in [ '10', '1000' ]:
-                f.write('           '
-                        '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
-                        'k1="%s" k2="%s" k3="%s" />\n' %
-                        (focal_length, data['aperture'], distance,
-                         data['k1'], data['k2'], data['k3']))
+            # Add vignetting entries
+            for focal_length in lenses[lens]['vignetting']:
+                data = lenses[lens]['vignetting'][focal_length]
+                for distance in [ '10', '1000' ]:
+                    f.write('           '
+                            '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
+                            'k1="%s" k2="%s" k3="%s" />\n' %
+                            (focal_length, data['aperture'], distance,
+                             data['k1'], data['k2'], data['k3']))
 
-        f.write('        </calibration>\n')
-        f.write('    </lens>\n')
-
-    f.close()
+            f.write('        </calibration>\n')
+            f.write('    </lens>\n')
+        f.write('</lensdatabase>\n')
+    finally:
+        f.close()
 
 def main():
     description = '''
