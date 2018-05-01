@@ -117,7 +117,7 @@ DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 </x:xmpmeta>
 '''
 
-DARKTABLE_PPM_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
+DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
@@ -274,7 +274,7 @@ def convert_raw_for_distortion(input_file, output_file=None):
 
     return output_file
 
-def convert_raw_to_ppm(input_file, output_file=None):
+def convert_raw_for_tca_vignetting(input_file, output_file=None):
     if output_file is None:
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
     sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
@@ -282,7 +282,7 @@ def convert_raw_to_ppm(input_file, output_file=None):
     if not os.path.isfile(sidecar_file):
         f = open(sidecar_file, 'w')
         try:
-            f.write(DARKTABLE_PPM_SIDECAR)
+            f.write(DARKTABLE_TCA_SIDECAR)
         finally:
             f.close()
 
@@ -588,7 +588,7 @@ def run_tca(complex_tca):
             exif_data = image_read_exif(input_file)
 
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_to_ppm(input_file, output_file)
+            output_file = convert_raw_for_tca_vignetting(input_file, output_file)
 
             tca_correct(output_file, input_file, exif_data, complex_tca)
 
@@ -607,7 +607,7 @@ def run_vignetting():
             exif_data = image_read_exif(input_file)
 
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_to_ppm(input_file, output_file)
+            output_file = convert_raw_for_tca_vignetting(input_file, output_file)
 
             pgm_file = convert_ppm_to_pgm(output_file)
 
