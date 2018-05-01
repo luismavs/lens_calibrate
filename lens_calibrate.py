@@ -198,11 +198,7 @@ def is_raw_file(filename):
         ]
     file_ext = os.path.splitext(filename)[1]
 
-    for raw_ext in raw_file_extensions:
-        if file_ext.upper() == raw_ext:
-            return True
-
-    return False
+    return file_ext.upper() in raw_file_extensions
 
 def image_read_exif(filename):
     exif = Metadata()
