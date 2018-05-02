@@ -613,14 +613,14 @@ def run_generate_xml():
             config = configparser.ConfigParser()
             config.read(os.path.join(path, filename))
 
-            for lens in config.sections():
-                focal_length = config[lens]['focal_length']
+            for lens_model in config.sections():
+                focal_length = config[lens_model]['focal_length']
 
-                lenses[lens]['tca'][focal_length] = {}
+                lenses[lens_model]['tca'][focal_length] = {}
 
-                for key in config[lens]:
+                for key in config[lens_model]:
                     if key != 'focal_length':
-                        lenses[lens]['tca'][focal_length][key] = config[lens][key]
+                        lenses[lens_model]['tca'][focal_length][key] = config[lens_model][key]
 
     # Scan vig files and add to lenses
     for path, directories, files in os.walk('vignetting/exported'):
@@ -631,33 +631,33 @@ def run_generate_xml():
             config = configparser.ConfigParser()
             config.read(os.path.join(path, filename))
 
-            for lens in config.sections():
-                focal_length = config[lens]['focal_length']
+            for lens_model in config.sections():
+                focal_length = config[lens_model]['focal_length']
 
-                lenses[lens]['vignetting'][focal_length] = {}
+                lenses[lens_model]['vignetting'][focal_length] = {}
 
-                for key in config[lens]:
+                for key in config[lens_model]:
                     if key != 'focal_length':
-                        lenses[lens]['vignetting'][focal_length][key] = config[lens][key]
+                        lenses[lens_model]['vignetting'][focal_length][key] = config[lens_model][key]
 
     # write lenses to xml
     with open('lensfun.xml', 'w') as f:
         f.write('<lensdatabase>\n')
-        for lens in lenses:
+        for lens_model in lenses:
             f.write('    <lens>\n')
-            f.write('        <maker>%s</maker>\n' % lenses[lens]['maker'])
-            f.write('        <model>%s</model>\n' % lens)
-            f.write('        <mount>%s</mount>\n' % lenses[lens]['mount'])
-            f.write('        <cropfactor>%s</cropfactor>\n' % lenses[lens]['cropfactor'])
-            if lenses[lens]['type'] != 'normal':
-                f.write('        <type>%s</type>\n' % lenses[lens]['type'])
+            f.write('        <maker>%s</maker>\n' % lenses[lens_model]['maker'])
+            f.write('        <model>%s</model>\n' % lens_model)
+            f.write('        <mount>%s</mount>\n' % lenses[lens_model]['mount'])
+            f.write('        <cropfactor>%s</cropfactor>\n' % lenses[lens_model]['cropfactor'])
+            if lenses[lens_model]['type'] != 'normal':
+                f.write('        <type>%s</type>\n' % lenses[lens_model]['type'])
 
             # Add calibration data
             f.write('        <calibration>\n')
 
             # Add distortion entries
-            for focal_length in lenses[lens]['distortion']:
-                data = list(map(str.strip, lenses[lens]['distortion'][focal_length].split(',')))
+            for focal_length in lenses[lens_model]['distortion']:
+                data = list(map(str.strip, lenses[lens_model]['distortion'][focal_length].split(',')))
                 if data[1] is None:
                     f.write('           '
                             '<distortion model="poly3" focal="%s" k1="%s" />\n' %
@@ -668,8 +668,8 @@ def run_generate_xml():
                             (focal_length, data[0], data[1], data[2]))
 
             # Add tca entries
-            for focal_length in lenses[lens]['tca']:
-                data = lenses[lens]['tca'][focal_length]
+            for focal_length in lenses[lens_model]['tca']:
+                data = lenses[lens_model]['tca'][focal_length]
                 if data['complex_tca'] == 'True':
                     f.write('           '
                             '<tca model="poly3" focal="%s" br="%s" vr="%s" bb="%s" vb="%s" />\n' %
@@ -680,8 +680,8 @@ def run_generate_xml():
                             (focal_length, data['vr'], data['vb']))
 
             # Add vignetting entries
-            for focal_length in lenses[lens]['vignetting']:
-                data = lenses[lens]['vignetting'][focal_length]
+            for focal_length in lenses[lens_model]['vignetting']:
+                data = lenses[lens_model]['vignetting'][focal_length]
                 for distance in [ '10', '1000' ]:
                     f.write('           '
                             '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
