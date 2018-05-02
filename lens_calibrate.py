@@ -239,11 +239,8 @@ def convert_raw_for_distortion(input_file, output_file=None):
     sidecar_file = (os.path.join(os.path.dirname(output_file), "distortion.xmp"))
 
     if not os.path.isfile(sidecar_file):
-        f = open(sidecar_file, 'w')
-        try:
+        with open(sidecar_file, 'w') as f:
             f.write(DARKTABLE_DISTORTION_SIDECAR)
-        finally:
-            f.close()
 
     if not os.path.exists(output_file):
         print("Converting %s to %s ..." % (input_file, output_file), end='')
@@ -276,11 +273,8 @@ def convert_raw_for_tca_vignetting(input_file, output_file=None):
     sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
 
     if not os.path.isfile(sidecar_file):
-        f = open(sidecar_file, 'w')
-        try:
+        with open(sidecar_file, 'w') as f:
             f.write(DARKTABLE_TCA_SIDECAR)
-        finally:
-            f.close()
 
     if not os.path.exists(output_file):
         cmd = [
@@ -392,14 +386,11 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
             tca_config.write(tcafile)
 
         gp_file = ("%s.gp" % output_file)
-        f = open(gp_file, "w")
-        try:
+        with open(gp_file, "w") as f:
             f.write('set title "%s"\n' % original_file)
             f.write('plot [0:1.8] %s * x**2 + %s title "red", %s * x**2 + %s title "blue"\n' %
                     (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
             f.write('pause -1')
-        finally:
-            f.close()
 
         print(" DONE")
 
@@ -421,8 +412,9 @@ def calculate_vignetting(input_file, exif_data):
 
     print("Generating vignetting data for %s ... " % input_file, end='')
 
-    f = open(input_file, 'rb')
-    content = f.read()
+    content = ''
+    with open(input_file, 'rb') as f:
+        content = f.read()
 
     width, height = None, None
     header_size = 0
@@ -454,12 +446,9 @@ def calculate_vignetting(input_file, exif_data):
             radii.append(radius)
             intensities.append(intensity)
 
-    f = open(all_points_filename, 'w')
-    try:
+    with open(all_points_filename, 'w') as f:
         for radius, intensity in zip(radii, intensities):
             f.write("%d %d\n" % (radius, intensity))
-    finally:
-        f.close()
 
     number_of_bins = 16
     bins = [[] for i in range(number_of_bins)]
@@ -474,12 +463,9 @@ def calculate_vignetting(input_file, exif_data):
     radii = [i / (number_of_bins - 1) * maximal_radius for i in range(number_of_bins)]
     intensities = [numpy.median(bin) for bin in bins]
 
-    f = open(bins_filename, 'w')
-    try:
+    with open(bins_filename, 'w') as f:
         for radius, intensity in zip(radii, intensities):
             f.write("%d %d\n" % (radius, intensity))
-    finally:
-        f.close()
 
     radii, intensities = numpy.array(radii), numpy.array(intensities)
 
@@ -500,8 +486,7 @@ def calculate_vignetting(input_file, exif_data):
 
     if distance == float("inf"):
         distance = "∞"
-    c = codecs.open(gp_filename, "w", encoding="utf-8")
-    try:
+    with codecs.open(gp_filename, "w", encoding="utf-8") as c:
         c.write('set title "%s, %f mm, f/%0.1f, %s m"\n' %
                 (exif_data['lens_model'], exif_data['focal_length'],
                  exif_data['aperture'], distance))
@@ -512,8 +497,6 @@ def calculate_vignetting(input_file, exif_data):
         c.write('%f * (1 + (%f) * x**2 + (%f) * x**4 + (%f) * x**6) title "fit"\n' %
                 (A, k1, k2, k3))
         c.write('pause -1')
-    finally:
-        c.close()
 
     print(" DONE")
 
@@ -657,9 +640,8 @@ def run_generate_xml():
                     if key != 'focal_length':
                         lenses[lens]['vignetting'][focal_length][key] = config[lens][key]
 
-    f = open('lensfun.xml', 'w')
     # write lenses to xml
-    try:
+    with open('lensfun.xml', 'w') as f:
         f.write('<lensdatabase>\n')
         for lens in lenses:
             f.write('    <lens>\n')
@@ -710,8 +692,6 @@ def run_generate_xml():
             f.write('        </calibration>\n')
             f.write('    </lens>\n')
         f.write('</lensdatabase>\n')
-    finally:
-        f.close()
 
 def main():
     description = '''
