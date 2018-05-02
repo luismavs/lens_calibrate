@@ -209,14 +209,20 @@ def image_read_exif(filename):
         print("Failed to open %s" % filename)
         return None
 
+    lens_model = None
     if exif.has_tag('Exif.Photo.LensModel'):
         lens_model = exif.get_tag_string('Exif.Photo.LensModel')
     else:
         # Workaround for Nikon
         if exif.has_tag('Exif.NikonLd3.LensIDNumber'):
             lens_model = exif.get_tag_interpreted_string('Exif.NikonLd3.LensIDNumber')
-        else:
-            lens_model = 'Standard'
+        if exif.has_tag('Exif.Sony1.LensID'):
+            lens_model = exif.get_tag_interpreted_string('Exif.Sony1.LensID')
+        if exif.has_tag('Exif.Minolta.LensID')
+            lens_model = exif.get_tag_interpreted_string('Exif.Minolta.LensID')
+
+    if lens_model is None:
+       lens_model = 'Standard'
 
     if exif.has_tag('Exif.Photo.FocalLength'):
         focal_length = exif.get_focal_length()
