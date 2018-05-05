@@ -273,7 +273,7 @@ def convert_raw_for_distortion(input_file, output_file=None):
 
     return output_file
 
-def convert_raw_for_tca_vignetting(input_file, output_file=None):
+def convert_raw_for_tca_or_vignetting(input_file, output_file=None):
     if output_file is None:
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
     sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
@@ -301,7 +301,7 @@ def convert_raw_for_tca_vignetting(input_file, output_file=None):
 
     return output_file
 
-def convert_ppm_to_pgm(input_file):
+def convert_ppm_for_vignetting(input_file):
     output_file = ("%s.pgm" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
@@ -573,7 +573,7 @@ def run_tca(complex_tca):
             exif_data = image_read_exif(input_file)
 
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_for_tca_vignetting(input_file, output_file)
+            output_file = convert_raw_for_tca_or_vignetting(input_file, output_file)
 
             tca_correct(output_file, input_file, exif_data, complex_tca)
 
@@ -592,9 +592,9 @@ def run_vignetting():
             exif_data = image_read_exif(input_file)
 
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_for_tca_vignetting(input_file, output_file)
+            output_file = convert_raw_for_tca_or_vignetting(input_file, output_file)
 
-            pgm_file = convert_ppm_to_pgm(output_file)
+            pgm_file = convert_ppm_for_vignetting(output_file)
 
             calculate_vignetting(pgm_file, exif_data)
 
