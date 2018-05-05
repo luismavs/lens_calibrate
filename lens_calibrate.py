@@ -305,7 +305,15 @@ def convert_ppm_for_vignetting(input_file):
     output_file = ("%s.pgm" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        cmd = [ "convert", input_file, '-colorspace', 'RGB', output_file ]
+        # FIXME Is the smaller size used for supplying avaged
+        # pixel values for the plotting?
+        cmd = [ "convert",
+                input_file,
+                '-colorspace',
+                'RGB',
+                '-resize',
+                '400',
+                output_file ]
         try:
             subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError:
