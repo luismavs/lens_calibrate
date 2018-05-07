@@ -556,7 +556,7 @@ def run_distortion():
             # Convert RAW files to tiff for hugin
             input_file = os.path.join(path, filename)
             output_file = os.path.join(path, "exported", ("%s.tif" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_to_tiff(input_file, output_file)
+            output_file = convert_raw_for_distortion(input_file, output_file)
 
     if not lenses_config_exists:
         sorted_lenses_exif_group = {}
