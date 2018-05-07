@@ -22,7 +22,7 @@
 #
 #######################################################################
 #
-# Requires: python3-gexiv2
+# Requires: python3-exiv2
 # Requires: python3-numpy
 # Requires: python3-spicy
 #
@@ -43,9 +43,8 @@ import subprocess
 from subprocess import DEVNULL
 from scipy.optimize.minpack import leastsq
 
-import gi
-gi.require_version('GExiv2', '0.10')
-from gi.repository.GExiv2 import Metadata
+from pyexiv2.metadata import ImageMetadata
+from pyexiv2.exif import ExifTag
 
 DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
@@ -200,38 +199,45 @@ def is_raw_file(filename):
 
     return file_ext.upper() in raw_file_extensions
 
-def image_read_exif(filename):
-    exif = Metadata()
+def has_exif_tag(data, tag):
+    return tag in data
 
-    try:
-        exif.open_path(filename)
-    except:
-        print("Failed to open %s" % filename)
-        return None
+def image_read_exif(filename):
+    data = ImageMetadata(filename)
+
+    # This reads the metadata and closes the file
+    data.read()
 
     lens_model = None
-    if exif.has_tag('Exif.Photo.LensModel'):
-        lens_model = exif.get_tag_string('Exif.Photo.LensModel')
+    tag = 'Exif.Photo.LensModel'
+    if has_exif_tag(data, tag):
+        lens_model = data[tag].value
     else:
-        # Workaround for Nikon
-        if exif.has_tag('Exif.NikonLd3.LensIDNumber'):
-            lens_model = exif.get_tag_interpreted_string('Exif.NikonLd3.LensIDNumber')
-        if exif.has_tag('Exif.Sony1.LensID'):
-            lens_model = exif.get_tag_interpreted_string('Exif.Sony1.LensID')
-        if exif.has_tag('Exif.Minolta.LensID')
-            lens_model = exif.get_tag_interpreted_string('Exif.Minolta.LensID')
+        tag = 'Exif.NikonLd3.LensIDNumber'
+        if has_exif_tag(data, tag):
+            lens_model = data[tag].human_value
+
+        tag = 'Exif.Sony1.LensID'
+        if has_exif_tag(data, tag):
+            lens_model = data[tag].human_value
+
+        tag = 'Exif.Minolta.LensID'
+        if has_exif_tag(data, tag):
+            lens_model = data[tag].human_value
 
     if lens_model is None:
        lens_model = 'Standard'
 
-    if exif.has_tag('Exif.Photo.FocalLength'):
-        focal_length = exif.get_focal_length()
+    tag = 'Exif.Photo.FocalLength'
+    if has_exif_tag(data, tag):
+        focal_length = float(data[tag].value)
     else:
         print("%s doesn't have Exif.Photo.FocalLength set. " +
               "Please fix it manually.")
 
-    if exif.has_tag('Exif.Photo.FNumber'):
-        aperture = exif.get_fnumber()
+    tag = 'Exif.Photo.FNumber'
+    if has_exif_tag(data, tag):
+        aperture = float(data[tag].value)
     else:
         print("%s doesn't have Exif.Photo.FNumber set. " +
               "Please fix it manually.")
