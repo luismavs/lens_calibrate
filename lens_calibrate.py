@@ -217,6 +217,10 @@ def image_read_exif(filename):
         if has_exif_tag(data, tag):
             lens_model = data[tag].human_value
 
+        tag = 'Exif.Panasonic.LensType'
+        if has_exif_tag(data, tag):
+            lens_model = data[tag].value
+
         tag = 'Exif.Sony1.LensID'
         if has_exif_tag(data, tag):
             lens_model = data[tag].human_value
