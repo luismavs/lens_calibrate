@@ -345,7 +345,7 @@ def create_lenses_config(lenses_exif_group):
                 }
         for exif_data in lenses_exif_group[lenses]:
             distortion = ("distortion(%dmm)" % exif_data['focal_length'])
-            config[lenses][distortion] = '0, 0, 0'
+            config[lenses][distortion] = '0.0, 0.0, 0.0'
     with open('lenses.conf', 'w') as configfile:
         config.write(configfile)
 
