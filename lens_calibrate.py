@@ -409,12 +409,13 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
         with open(output_file, "w") as tcafile:
             tca_config.write(tcafile)
 
-        gp_file = ("%s.gp" % output_file)
-        with open(gp_file, "w") as f:
-            f.write('set title "%s" noenhanced\n' % original_file)
-            f.write('plot [0:1.8] %s * x**2 + %s title "red", %s * x**2 + %s title "blue"\n' %
-                    (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
-            f.write('pause -1')
+        if complex_tca:
+            gp_file = ("%s.gp" % output_file)
+            with open(gp_file, "w") as f:
+                f.write('set title "%s" noenhanced\n' % original_file)
+                f.write('plot [0:1.8] %s * x**2 + %s title "red", %s * x**2 + %s title "blue"\n' %
+                        (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
+                f.write('pause -1')
 
         print(" DONE")
 
