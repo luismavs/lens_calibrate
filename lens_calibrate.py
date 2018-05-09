@@ -411,7 +411,7 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
 
         gp_file = ("%s.gp" % output_file)
         with open(gp_file, "w") as f:
-            f.write('set title "%s"\n' % original_file)
+            f.write('set title "%s" noenhanced\n' % original_file)
             f.write('plot [0:1.8] %s * x**2 + %s title "red", %s * x**2 + %s title "blue"\n' %
                     (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
             f.write('pause -1')
@@ -511,7 +511,7 @@ def calculate_vignetting(input_file, exif_data):
     if distance == float("inf"):
         distance = "∞"
     with codecs.open(gp_filename, "w", encoding="utf-8") as c:
-        c.write('set title "%s, %f mm, f/%0.1f, %s m"\n' %
+        c.write('set title "%s, %f mm, f/%0.1f, %s m" noenhanced\n' %
                 (exif_data['lens_model'], exif_data['focal_length'],
                  exif_data['aperture'], distance))
         c.write('plot "%s" with dots title "samples", ' %
