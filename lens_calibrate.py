@@ -315,7 +315,7 @@ def convert_ppm_for_vignetting(input_file):
     output_file = ("%s.pgm" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        # FIXME Is the smaller size used for supplying avaged
+        # FIXME Is the smaller size used for supplying averaged
         # pixel values for the plotting?
         cmd = [ "convert",
                 input_file,
