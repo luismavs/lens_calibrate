@@ -350,8 +350,21 @@ def create_lenses_config(lenses_exif_group):
         config.write(configfile)
 
     print("A template has been created for distortion corrections as lenses.conf.")
-    print("Please fill this file with proper information.")
-    print("You can find details here: http://wilson.bronger.org/lens_calibration_tutorial/")
+    print("Please fill this file with proper information. The most important")
+    print("values are:")
+    print("")
+    print("maker:        is the manufacturer or the lens, e.g. 'FE 16-35mm F2.8 GM'")
+    print("mount:        is the name of the mount system, e.g. 'Sony E'")
+    print("cropfactor:   is the crop factor of the camera as a float, e.g. '1.0' for")
+    print("              full frame")
+    print("aspect_ratio: is the aspect_ratio, e.g. '3:2'")
+    print("type:         is the type of the lens, e.g. 'normal' for rectilinear")
+    print("              lenses. Other possible values are: stereographic, equisolid,")
+    print("              stereographic, panoramic or fisheye.")
+    print("")
+    print("You can find details for distortion calculations here:")
+    print("")
+    print("https://hackmd.io/s/SkOIRlr5z#")
 
     return
 
