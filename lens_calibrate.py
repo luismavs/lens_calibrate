@@ -319,7 +319,8 @@ def convert_ppm_for_vignetting(input_file):
         # pixel values for the plotting?
         cmd = [ "convert",
                 input_file,
-                '-colorspace',
+                '-set'
+                'colorspace',
                 'RGB',
                 '-resize',
                 '400',
@@ -473,8 +474,6 @@ def calculate_vignetting(input_file, exif_data):
     half_diagonal = math.hypot(width // 2, height // 2)
     image_data = struct.unpack("!{0}s{1}H".format(header_size, width * height), content)[1:]
 
-    f.close()
-
     radii, intensities = [], []
     maximal_radius = 1
     for i, intensity in enumerate(image_data):
@@ -486,7 +485,7 @@ def calculate_vignetting(input_file, exif_data):
 
     with open(all_points_filename, 'w') as f:
         for radius, intensity in zip(radii, intensities):
-            f.write("%d %d\n" % (radius, intensity))
+            f.write("%f %d\n" % (radius, intensity))
 
     number_of_bins = 16
     bins = [[] for i in range(number_of_bins)]
@@ -503,7 +502,7 @@ def calculate_vignetting(input_file, exif_data):
 
     with open(bins_filename, 'w') as f:
         for radius, intensity in zip(radii, intensities):
-            f.write("%d %d\n" % (radius, intensity))
+            f.write("%f %d\n" % (radius, intensity))
 
     radii, intensities = numpy.array(radii), numpy.array(intensities)
 
