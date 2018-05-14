@@ -319,7 +319,7 @@ def convert_ppm_for_vignetting(input_file):
         # pixel values for the plotting?
         cmd = [ "convert",
                 input_file,
-                '-set'
+                '-set',
                 'colorspace',
                 'RGB',
                 '-resize',
