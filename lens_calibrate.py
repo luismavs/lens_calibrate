@@ -569,16 +569,21 @@ def run_distortion():
                 continue
             if not is_raw_file(filename):
                 continue
-            if not lenses_config_exists:
-                exif_data = image_read_exif(os.path.join(path, filename))
-                if exif_data is not None:
-                    if exif_data['lens_model'] not in lenses_exif_group:
-                        lenses_exif_group[exif_data['lens_model']] = []
-                    lenses_exif_group[exif_data['lens_model']].append(exif_data)
 
-            # Convert RAW files to tiff for hugin
             input_file = os.path.join(path, filename)
             output_file = os.path.join(path, "exported", ("%s.tif" % os.path.splitext(filename)[0]))
+
+            exif_data = image_read_exif(input_file)
+            if exif_data is not None:
+                if exif_data['lens_model'] not in lenses_exif_group:
+                    lenses_exif_group[exif_data['lens_model']] = []
+                lenses_exif_group[exif_data['lens_model']].append(exif_data)
+
+                # Add focal length to file name for easier identification
+                if exif_data['focal_length'] > 1.0:
+                    output_file = os.path.join(path, "exported", ("%s_%dmm.tif" % (os.path.splitext(filename)[0], exif_data['focal_length'])))
+
+            # Convert RAW files to TIF for hugin
             output_file = convert_raw_for_distortion(input_file, output_file)
 
     if not lenses_config_exists:
