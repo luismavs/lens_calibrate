@@ -524,6 +524,7 @@ def calculate_vignetting(input_file, exif_data):
     if distance == float("inf"):
         distance = "∞"
     with codecs.open(gp_filename, "w", encoding="utf-8") as c:
+        c.write('set grid\n')
         c.write('set title "%s, %f mm, f/%0.1f, %s m" noenhanced\n' %
                 (exif_data['lens_model'], exif_data['focal_length'],
                  exif_data['aperture'], distance))
