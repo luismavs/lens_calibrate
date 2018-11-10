@@ -270,7 +270,8 @@ def convert_raw_for_distortion(input_file, output_file=None):
                 sidecar_file,
                 output_file,
                 "--core",
-                "--conf", "plugins/lighttable/export/iccprofile=image",
+                "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
+                "--conf", "plugins/lighttable/export/iccprofile=sRGB",
                 "--conf", "plugins/lighttable/export/style=none",
                 "--conf", "plugins/imageio/format/tiff/bpp=16",
                 "--conf", "plugins/imageio/format/tiff/compress=5"
@@ -303,7 +304,8 @@ def convert_raw_for_tca_or_vignetting(input_file, output_file=None):
                 sidecar_file,
                 output_file,
                 "--core",
-                "--conf", "plugins/lighttable/export/iccprofile=image",
+                "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
+                "--conf", "plugins/lighttable/export/iccprofile=linear_rec2020_rgb",
                 "--conf", "plugins/lighttable/export/style=none",
             ]
         try:
