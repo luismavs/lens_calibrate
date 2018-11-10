@@ -46,6 +46,8 @@ from scipy.optimize.minpack import leastsq
 from pyexiv2.metadata import ImageMetadata
 from pyexiv2.exif import ExifTag
 
+# Sidecar for loading into hugin
+# Applies a neutral basecurve and enables sharpening
 DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -116,6 +118,8 @@ DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 </x:xmpmeta>
 '''
 
+# Sidecar for TCA corrections
+# Disables the basecurve and sharpening
 DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
