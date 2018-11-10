@@ -567,6 +567,10 @@ def run_distortion():
 
     print('Running distortion corrections ...')
 
+    if not os.path.isdir("distortion"):
+        print("No distortion directory, you have to run init first!")
+        return
+
     if not os.path.isdir("distortion/exported"):
         os.mkdir("distortion/exported")
 
@@ -602,6 +606,10 @@ def run_distortion():
         create_lenses_config(sorted_lenses_exif_group)
 
 def run_tca(complex_tca):
+    if not os.path.isdir("tca"):
+        print("No tca directory, you have to run init first!")
+        return
+
     if not os.path.isdir("tca/exported"):
         os.mkdir("tca/exported")
 
@@ -621,6 +629,10 @@ def run_tca(complex_tca):
             tca_correct(output_file, input_file, exif_data, complex_tca)
 
 def run_vignetting():
+    if not os.path.isdir("vignetting"):
+        print("No tca directory, you have to run init first!")
+        return
+
     if not os.path.isdir("vignetting/exported"):
         os.mkdir("vignetting/exported")
 
