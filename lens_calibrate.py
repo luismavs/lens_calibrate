@@ -26,7 +26,7 @@
 # Requires: python3-numpy
 # Requires: python3-spicy
 #
-# Requires: darktable or dcraw
+# Requires: darktable (darktable-cli)
 # Requires: hugin-tools (tca_correct)
 # Requires: ImageMagick (convert)
 #
