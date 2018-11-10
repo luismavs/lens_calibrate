@@ -321,15 +321,14 @@ def convert_ppm_for_vignetting(input_file):
     output_file = ("%s.pgm" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        # FIXME Is the smaller size used for supplying averaged
-        # pixel values for the plotting?
+        # TODO: Ask for clarification for such a small image size
         cmd = [ "convert",
                 input_file,
                 '-set',
                 'colorspace',
                 'RGB',
                 '-resize',
-                '400',
+                '250',
                 output_file ]
         try:
             subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
