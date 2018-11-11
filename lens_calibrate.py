@@ -247,7 +247,7 @@ def image_read_exif(filename):
     if has_exif_tag(data, tag):
         aperture = float(data[tag].value)
     else:
-        print("%s doesn't have Exif.Photo.FNumber set. " +
+        print("%s doesn't have Exif.Photo.FNumber set. " % (filename) +
               "Please fix it manually.")
 
     return { "lens_model" : lens_model, "focal_length" : focal_length, "aperture" : aperture }
