@@ -766,11 +766,11 @@ def run_generate_xml():
 
             # Add vignetting entries
             focal_lengths = lenses[lens_model]['vignetting'].keys()
-            for focal_length in sorted(focal_lengths):
+            for focal_length in sorted(focal_lengths, key=float):
                 apertures = lenses[lens_model]['vignetting'][focal_length].keys()
-                for aperture in sorted(apertures):
+                for aperture in sorted(apertures, key=float):
                     distances = lenses[lens_model]['vignetting'][focal_length][aperture].keys()
-                    for distance in sorted(distances):
+                    for distance in sorted(distances, key=float):
                         data = lenses[lens_model]['vignetting'][focal_length][aperture][distance]
 
                         if distance == 'inf':
