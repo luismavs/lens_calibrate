@@ -773,22 +773,21 @@ def run_generate_xml():
                     for distance in sorted(distances):
                         data = lenses[lens_model]['vignetting'][focal_length][aperture][distance]
 
-                        if len(distances) == 1 and distance == 'inf':
-                            # Write 'inf' values as distance 10 first
-                            f.write('           '
-                                    '<vignetting model="pa" focal="%s" aperture="%s" distance="10" '
-                                    'k1="%s" k2="%s" k3="%s" />\n' %
-                                    (focal_length, aperture, distance,
-                                     data['k1'], data['k2'], data['k3']))
-
-                        # Write inf as distance 1000
                         if distance == 'inf':
                             distance = '1000'
-                        f.write('           '
-                                '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
-                                'k1="%s" k2="%s" k3="%s" />\n' %
-                                (focal_length, aperture, distance,
-                                 data['k1'], data['k2'], data['k3']))
+
+                        _distances = [ distance ]
+
+                        # If we only have an infinite distance, we need to write two values
+                        if len(distances) == 1 and distance == '1000':
+                            _distances = [ '10', '1000' ]
+
+                        for _distance in _distances:
+                            f.write('           '
+                                    '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
+                                    'k1="%s" k2="%s" k3="%s" />\n' %
+                                    (focal_length, aperture, _distance,
+                                     data['k1'], data['k2'], data['k3']))
 
             f.write('        </calibration>\n')
             f.write('    </lens>\n')
