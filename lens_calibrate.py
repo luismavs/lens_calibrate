@@ -692,8 +692,8 @@ def run_generate_xml():
 
             for lens_model in config.sections():
                 focal_length = config[lens_model]['focal_length']
-
-                lenses[lens_model]['tca'][focal_length] = {}
+                if not focal_length in lenses[lens_model]['tca']:
+                    lenses[lens_model]['tca'][focal_length] = {}
 
                 for key in config[lens_model]:
                     if key != 'focal_length':
