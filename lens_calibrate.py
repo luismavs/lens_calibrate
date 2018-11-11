@@ -613,6 +613,8 @@ def run_tca(complex_tca):
         for filename in files:
             if path != "tca":
                 continue
+            if not is_raw_file(filename):
+                continue
 
             # Convert RAW files to tiff for tca_correct
             input_file = os.path.join(path, filename)
@@ -636,6 +638,9 @@ def run_vignetting():
     for path, directories, files in os.walk('vignetting'):
         for filename in files:
             distance = float("inf")
+
+            if not is_raw_file(filename):
+                continue
 
             # Ignore the export path
             if path == export_path:
