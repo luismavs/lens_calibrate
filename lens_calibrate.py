@@ -441,15 +441,12 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
 def fit_function(radius, A, k1, k2, k3):
     return A * (1 + k1 * radius**2 + k2 * radius**4 + k3 * radius**6)
 
-def calculate_vignetting(input_file, exif_data):
+def calculate_vignetting(input_file, exif_data, distance):
     basename = os.path.splitext(input_file)[0]
     all_points_filename = ("%s.all_points.dat" % basename)
     bins_filename = ("%s.bins.dat" % basename)
     gp_filename = ("%s.gp" % basename)
     vig_filename = ("%s.vig" % basename)
-
-    # TODO not supported yet
-    distance = float('inf')
 
     if os.path.exists(vig_filename):
         return
@@ -631,26 +628,41 @@ def run_vignetting():
     if not os.path.isdir("vignetting"):
         print("No tca directory, you have to run init first!")
         return
+    export_path = os.path.join("vignetting", "exported")
 
     if not os.path.isdir("vignetting/exported"):
         os.mkdir("vignetting/exported")
 
     for path, directories, files in os.walk('vignetting'):
         for filename in files:
-            if path != "vignetting":
+            distance = float("inf")
+
+            # Ignore the export path
+            if path == export_path:
                 continue
+
+            if path != "vignetting":
+                d = os.path.basename(path)
+                try:
+                    distance = float(d)
+                except:
+                    continue
 
             # Convert RAW files to tiff for tca_correct
             input_file = os.path.join(path, filename)
 
+            # Read EXIF data
             exif_data = image_read_exif(input_file)
 
-            output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
+            # Convert the RAW file to ppm
+            output_file = os.path.join(export_path, ("%s.ppm" % os.path.splitext(filename)[0]))
             output_file = convert_raw_for_tca_or_vignetting(input_file, output_file)
 
+            # Create vignetting PGM files (grayscale)
             pgm_file = convert_ppm_for_vignetting(output_file)
 
-            calculate_vignetting(pgm_file, exif_data)
+            # Calculate vignetting data
+            calculate_vignetting(pgm_file, exif_data, distance)
 
 def run_generate_xml():
     print("Generating lensfun.xml")
