@@ -705,12 +705,20 @@ def run_generate_xml():
 
             for lens_model in config.sections():
                 focal_length = config[lens_model]['focal_length']
+                if not focal_length in lenses[lens_model]['vignetting']:
+                    lenses[lens_model]['vignetting'][focal_length] = {}
 
-                lenses[lens_model]['vignetting'][focal_length] = {}
+                aperture = config[lens_model]['aperture']
+                if not aperture in lenses[lens_model]['vignetting'][focal_length]:
+                    lenses[lens_model]['vignetting'][focal_length][aperture] = {}
+
+                distance = config[lens_model]['distance']
+                if not distance in lenses[lens_model]['vignetting'][focal_length][aperture]:
+                    lenses[lens_model]['vignetting'][focal_length][aperture][distance] = {}
 
                 for key in config[lens_model]:
-                    if key != 'focal_length':
-                        lenses[lens_model]['vignetting'][focal_length][key] = config[lens_model][key]
+                    if key != 'focal_length' and key != 'aperture' and key != 'distance':
+                        lenses[lens_model]['vignetting'][focal_length][aperture][distance][key] = config[lens_model][key]
 
     # write lenses to xml
     with open('lensfun.xml', 'w') as f:
@@ -752,14 +760,30 @@ def run_generate_xml():
                             (focal_length, data['vr'], data['vb']))
 
             # Add vignetting entries
-            for focal_length in lenses[lens_model]['vignetting']:
-                data = lenses[lens_model]['vignetting'][focal_length]
-                for distance in [ '10', '1000' ]:
-                    f.write('           '
-                            '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
-                            'k1="%s" k2="%s" k3="%s" />\n' %
-                            (focal_length, data['aperture'], distance,
-                             data['k1'], data['k2'], data['k3']))
+            focal_lengths = lenses[lens_model]['vignetting'].keys()
+            for focal_length in sorted(focal_lengths):
+                apertures = lenses[lens_model]['vignetting'][focal_length].keys()
+                for aperture in sorted(apertures):
+                    distances = lenses[lens_model]['vignetting'][focal_length][aperture].keys()
+                    for distance in sorted(distances):
+                        data = lenses[lens_model]['vignetting'][focal_length][aperture][distance]
+
+                        if len(distances) == 1 and distance == 'inf':
+                            # Write 'inf' values as distance 10 first
+                            f.write('           '
+                                    '<vignetting model="pa" focal="%s" aperture="%s" distance="10" '
+                                    'k1="%s" k2="%s" k3="%s" />\n' %
+                                    (focal_length, aperture, distance,
+                                     data['k1'], data['k2'], data['k3']))
+
+                        # Write inf as distance 1000
+                        if distance == 'inf':
+                            distance = '1000'
+                        f.write('           '
+                                '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
+                                'k1="%s" k2="%s" k3="%s" />\n' %
+                                (focal_length, aperture, distance,
+                                 data['k1'], data['k2'], data['k3']))
 
             f.write('        </calibration>\n')
             f.write('    </lens>\n')
