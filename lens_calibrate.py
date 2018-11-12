@@ -741,7 +741,8 @@ def run_generate_xml():
             f.write('        <calibration>\n')
 
             # Add distortion entries
-            for focal_length in lenses[lens_model]['distortion']:
+            focal_lengths = lenses[lens_model]['distortion'].keys()
+            for focal_length in sorted(focal_lengths, key=float):
                 data = list(map(str.strip, lenses[lens_model]['distortion'][focal_length].split(',')))
                 if data[1] is None:
                     f.write('           '
@@ -753,7 +754,8 @@ def run_generate_xml():
                             (focal_length, data[0], data[1], data[2]))
 
             # Add tca entries
-            for focal_length in lenses[lens_model]['tca']:
+            focal_lengths = lenses[lens_model]['tca'].keys()
+            for focal_length in sorted(focal_lengths, key=float):
                 data = lenses[lens_model]['tca'][focal_length]
                 if data['complex_tca'] == 'True':
                     f.write('           '
