@@ -250,7 +250,9 @@ def image_read_exif(filename):
         print("%s doesn't have Exif.Photo.FNumber set. " % (filename) +
               "Please fix it manually.")
 
-    return { "lens_model" : lens_model, "focal_length" : focal_length, "aperture" : aperture }
+    return { "lens_model" : lens_model,
+             "focal_length" : focal_length,
+             "aperture" : aperture }
 
 # convert raw file to 16bit tiff
 def convert_raw_for_distortion(input_file, output_file=None):
@@ -462,7 +464,7 @@ def calculate_vignetting(input_file, exif_data, distance):
     for i, line in enumerate(content.splitlines(True)):
         header_size += len(line)
         if i == 0:
-            assert line == b"P5\n", "Wrong image format (must be NetPGM binary)"
+            assert (line == b"P5\n"), "Wrong image format (must be NetPGM binary)"
         else:
             line = line.partition(b"#")[0].strip()
             if line:
@@ -470,7 +472,7 @@ def calculate_vignetting(input_file, exif_data, distance):
                     width, height = line.split()
                     width, height = int(width), int(height)
                 else:
-                    assert line == b"65535", "Wrong grayscale depth: {} (must be 65535)".format(int(line))
+                    assert (line == b"65535"), "Wrong grayscale depth: %d (must be 65535)" % (line)
                     break
 
     half_diagonal = math.hypot(width // 2, height // 2)
