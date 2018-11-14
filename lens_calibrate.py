@@ -265,7 +265,8 @@ def convert_raw_for_distortion(input_file, output_file=None):
             f.write(DARKTABLE_DISTORTION_SIDECAR)
 
     if not os.path.exists(output_file):
-        print("Converting %s to %s ..." % (input_file, output_file), end='')
+        print("Converting %s to %s ..." % (input_file, output_file), end='', flush=True)
+
         cmd = [
                 "darktable-cli",
                 input_file,
@@ -286,7 +287,7 @@ def convert_raw_for_distortion(input_file, output_file=None):
             print("Could not find darktable-cli")
             return None
 
-        print(" DONE")
+        print(" DONE", flush=True)
 
     return output_file
 
@@ -401,7 +402,8 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
     output_file = ("%s.tca" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        print("Running TCA corrections for %s ..." % (input_file), end='')
+        print("Running TCA corrections for %s ..." % (input_file), end='', flush=True)
+
         tca_complexity = 'v'
         if complex_tca:
             tca_complexity = 'bv'
@@ -438,7 +440,7 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
                         (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
                 f.write('pause -1')
 
-        print(" DONE")
+        print(" DONE", flush=True)
 
 def fit_function(radius, A, k1, k2, k3):
     return A * (1 + k1 * radius**2 + k2 * radius**4 + k3 * radius**6)
@@ -453,7 +455,7 @@ def calculate_vignetting(input_file, exif_data, distance):
     if os.path.exists(vig_filename):
         return
 
-    print("Generating vignetting data for %s ... " % input_file, end='')
+    print("Generating vignetting data for %s ... " % input_file, end='', flush=True)
 
     content = ''
     with open(input_file, 'rb') as f:
@@ -540,7 +542,7 @@ def calculate_vignetting(input_file, exif_data, distance):
                 (A, k1, k2, k3))
         c.write('pause -1')
 
-    print(" DONE")
+    print(" DONE\n", flush=True)
 
 def init():
     # Create directory structure
@@ -663,6 +665,9 @@ def run_vignetting():
 
             # Convert the RAW file to ppm
             output_file = os.path.join(export_path, ("%s.ppm" % os.path.splitext(filename)[0]))
+
+            print("Processing %s ... " % (input_file), flush=True)
+
             output_file = convert_raw_for_tca_or_vignetting(input_file, output_file)
 
             # Create vignetting PGM files (grayscale)
