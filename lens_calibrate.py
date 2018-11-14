@@ -238,7 +238,7 @@ def image_read_exif(filename):
 
     tag = 'Exif.Photo.FocalLength'
     if has_exif_tag(data, tag):
-        focal_length = float(data[tag].value)
+        focal_length = int(data[tag].value)
     else:
         print("%s doesn't have Exif.Photo.FocalLength set. " % (filename) +
               "Please fix it manually.")
