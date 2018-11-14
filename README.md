@@ -55,4 +55,5 @@ lensfun.xml file to:
 
 Create a bug report or pull request to add the lens to the project at:
 
+https://sourceforge.net/p/lensfun/bugs/
 https://github.com/lensfun/lensfun/
