@@ -24,7 +24,7 @@
 #
 # Requires: python3-exiv2
 # Requires: python3-numpy
-# Requires: python3-spicy
+# Requires: python3-scipy
 #
 # Requires: darktable (darktable-cli)
 # Requires: hugin-tools (tca_correct)

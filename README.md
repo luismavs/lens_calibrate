@@ -9,7 +9,7 @@ The script needs the following dependencies to be installed on your system:
 * python3
 * python3-exiv2 ([py3exiv2](http://py3exiv2.tuxfamily.org/) >= 0.2.1)
 * python3-numpy
-* python3-spicy
+* python3-scipy
 * darktable-cli ([darktable](https://darktable.org) >= 2.4.4)
 * tca_correct ([hugin](http://hugin.sourceforge.net) >= 2018)
 * convert ([ImageMagick](https://www.imagemagick.org/script/index.php))
