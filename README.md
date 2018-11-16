@@ -26,6 +26,13 @@ Optional:
 
 * gnuplot
 
+Packages
+--------
+
+Packages for most major distributions are available at:
+
+https://software.opensuse.org/download.html?project=graphics:darktable&package=lens_calibrate
+
 Running the calibration
 -----------------------
 
