@@ -1,6 +1,14 @@
 lens_calibrate.py
 =================
 
+Tutorial
+--------
+
+You can find a complete tutorial about lens calibration and the use of the
+lens_calibrate.py script here:
+
+https://pixls.us/articles/create-lens-calibration-data-for-lensfun/
+
 Requirements
 ------------
 
