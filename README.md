@@ -39,7 +39,7 @@ you need to fill in missing values.
 If you don't want to do distortion corrections you need to create the
 lenses.conf file manually. It needs to look like this:
 
-    [MODEL NAME]
+    [MODEL_NAME]
     maker =
     mount =
     cropfactor =
@@ -48,7 +48,8 @@ lenses.conf file manually. It needs to look like this:
 
 The values are:
 
-* *maker*: is the manufacturer or the lens, e.g. 'FE 16-35mm F2.8 GM'
+* *MODEL_NAME*: is the lens model 'FE 16-35mm F2.8 GM'
+* *maker*: is the manufacturer or the lens, e.g. 'Sony'
 * *mount*: is the name of the mount system, e.g. 'Sony E'
 * *cropfactor*: Is the crop factor of the camera as a float, e.g. '1.0' for full frame
 * *aspect_ratio*: This is the aspect_ratio, e.g. '3:2'
