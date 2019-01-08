@@ -163,8 +163,8 @@ DARKTABLE_TCA_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="ffffffff"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="8"
-      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
      <rdf:li
       darktable:operation="basecurve"
       darktable:enabled="0"
@@ -172,8 +172,8 @@ DARKTABLE_TCA_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpCFxCkAdoEQ3Q=="
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="8"
-      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
      <rdf:li
       darktable:operation="sharpen"
       darktable:enabled="0"
@@ -181,8 +181,8 @@ DARKTABLE_TCA_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="000000400000003f0000003f"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="8"
-      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
      <rdf:li
       darktable:operation="colorin"
       darktable:enabled="1"
@@ -190,8 +190,8 @@ DARKTABLE_TCA_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="gz10eJxjYaA/AAACRAAF"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="8"
-      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
     </rdf:Seq>
    </darktable:history>
   </rdf:Description>
