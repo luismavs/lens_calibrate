@@ -33,6 +33,19 @@ Packages for most major distributions are available at:
 
 https://software.opensuse.org/download.html?project=graphics:darktable&package=lens_calibrate
 
+Installing dependencies
+-----------------------
+
+If one of the python modules is not available you can do the following to
+install them on your system:
+
+* Install the packages python3-pip and python3-venv (e.g. with apt-get)
+* Change to directory where lens_calibrate.py is located
+* Setup a virtual env directory using: `python3 -m venv .venv`
+* Source the environment with: `source .venv/bin/activate`
+* Install missing packages with e.g. `pip3 install py3exiv2 numpy scipy`
+* Run the calibration script like documented below
+
 Running the calibration
 -----------------------
 
