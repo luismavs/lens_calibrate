@@ -119,8 +119,89 @@ DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 '''
 
 # Sidecar for TCA corrections
-# Disables the basecurve and sharpening
-DARKTABLE_TCA_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
+# Disables the basecurve and sharpening and sets input to Linear Rec2020 RGB
+DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+    xmlns:darktable="http://darktable.sf.net/"
+   xmp:Rating="1"
+   xmpMM:DerivedFrom="TCA.ARW"
+   darktable:xmp_version="2"
+   darktable:raw_params="0"
+   darktable:auto_presets_applied="1"
+   darktable:history_end="4">
+   <darktable:mask_id>
+    <rdf:Seq/>
+   </darktable:mask_id>
+   <darktable:mask_type>
+    <rdf:Seq/>
+   </darktable:mask_type>
+   <darktable:mask_name>
+    <rdf:Seq/>
+   </darktable:mask_name>
+   <darktable:mask_version>
+    <rdf:Seq/>
+   </darktable:mask_version>
+   <darktable:mask>
+    <rdf:Seq/>
+   </darktable:mask>
+   <darktable:mask_nb>
+    <rdf:Seq/>
+   </darktable:mask_nb>
+   <darktable:mask_src>
+    <rdf:Seq/>
+   </darktable:mask_src>
+   <darktable:history>
+    <rdf:Seq>
+     <rdf:li
+      darktable:operation="flip"
+      darktable:enabled="1"
+      darktable:modversion="2"
+      darktable:params="ffffffff"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+     <rdf:li
+      darktable:operation="basecurve"
+      darktable:enabled="0"
+      darktable:modversion="5"
+      darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpCFxCkAdoEQ3Q=="
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+     <rdf:li
+      darktable:operation="sharpen"
+      darktable:enabled="0"
+      darktable:modversion="1"
+      darktable:params="000000400000003f0000003f"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+     <rdf:li
+      darktable:operation="colorin"
+      darktable:enabled="1"
+      darktable:modversion="4"
+      darktable:params="gz10eJxjYaA/AAACRAAF"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+    </rdf:Seq>
+   </darktable:history>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+'''
+
+# Sidecar for vignetting corrections
+# Disables the basecurve and sharpening and sets input to Linear Rec2020 RGB
+DARKTABLE_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
@@ -300,14 +381,14 @@ def convert_raw_for_distortion(input_file, output_file=None):
 
     return output_file
 
-def convert_raw_for_tca_or_vignetting(input_file, output_file=None):
+def convert_raw_for_tca(input_file, output_file=None):
     if output_file is None:
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
     sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
 
     if not os.path.isfile(sidecar_file):
         with open(sidecar_file, 'w') as f:
-            f.write(DARKTABLE_TCA_VIGNETTING_SIDECAR)
+            f.write(DARKTABLE_TCA_SIDECAR)
 
     if not os.path.exists(output_file):
         cmd = [
@@ -329,18 +410,48 @@ def convert_raw_for_tca_or_vignetting(input_file, output_file=None):
 
     return output_file
 
+def convert_raw_for_vignetting(input_file, output_file=None):
+    if output_file is None:
+        output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
+    sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
+
+    if not os.path.isfile(sidecar_file):
+        with open(sidecar_file, 'w') as f:
+            f.write(DARKTABLE_VIGNETTING_SIDECAR)
+
+    if not os.path.exists(output_file):
+        # TODO: Ask for clarification for such a small image size for vignetting!
+        # Is this some normalization?
+        cmd = [
+                "darktable-cli",
+                input_file,
+                sidecar_file,
+                output_file,
+                "--width", "250",
+                "--core",
+                "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
+                "--conf", "plugins/lighttable/export/iccprofile=linear_rec2020_rgb",
+                "--conf", "plugins/lighttable/export/style=none",
+            ]
+        try:
+            subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError:
+            raise
+        except OSError:
+            print("Could not find darktable-cli")
+
+    return output_file
+
 def convert_ppm_for_vignetting(input_file):
     output_file = ("%s.pgm" % os.path.splitext(input_file)[0])
 
+    # Convert the ppm file to a pgm (grayscale) file
     if not os.path.exists(output_file):
-        # TODO: Ask for clarification for such a small image size
         cmd = [ "convert",
                 input_file,
                 '-set',
                 'colorspace',
                 'RGB',
-                '-resize',
-                '250',
                 output_file ]
         try:
             subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
@@ -483,7 +594,7 @@ def calculate_vignetting(input_file, exif_data, distance):
                     width, height = line.split()
                     width, height = int(width), int(height)
                 else:
-                    assert (line == b"65535"), "Wrong grayscale depth: %d (must be 65535)" % (line)
+                    assert (line == b"65535"), "Wrong grayscale depth: %d (must be 65535)" % (int(line))
                     break
 
     half_diagonal = math.hypot(width // 2, height // 2)
@@ -635,7 +746,7 @@ def run_tca(complex_tca):
             exif_data = image_read_exif(input_file)
 
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_for_tca_or_vignetting(input_file, output_file)
+            output_file = convert_raw_for_tca(input_file, output_file)
 
             tca_correct(output_file, input_file, exif_data, complex_tca)
 
@@ -677,7 +788,7 @@ def run_vignetting():
 
             print("Processing %s ... " % (input_file), flush=True)
 
-            output_file = convert_raw_for_tca_or_vignetting(input_file, output_file)
+            output_file = convert_raw_for_vignetting(input_file, output_file)
 
             # Create vignetting PGM files (grayscale)
             pgm_file = convert_ppm_for_vignetting(output_file)
