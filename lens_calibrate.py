@@ -120,7 +120,7 @@ DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 
 # Sidecar for TCA corrections
 # Disables the basecurve and sharpening
-DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
+DARKTABLE_TCA_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
@@ -132,7 +132,7 @@ DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
    darktable:xmp_version="2"
    darktable:raw_params="0"
    darktable:auto_presets_applied="1"
-   darktable:history_end="3">
+   darktable:history_end="4">
    <darktable:mask_id>
     <rdf:Seq/>
    </darktable:mask_id>
@@ -163,8 +163,8 @@ DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="ffffffff"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:blendop_version="8"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
      <rdf:li
       darktable:operation="basecurve"
       darktable:enabled="0"
@@ -172,8 +172,8 @@ DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpCFxCkAdoEQ3Q=="
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:blendop_version="8"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
      <rdf:li
       darktable:operation="sharpen"
       darktable:enabled="0"
@@ -181,8 +181,17 @@ DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:params="000000400000003f0000003f"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:blendop_version="8"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
+     <rdf:li
+      darktable:operation="colorin"
+      darktable:enabled="1"
+      darktable:modversion="4"
+      darktable:params="gz10eJxjYaA/AAACRAAF"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="8"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRxQcA5qIZBA=="/>
     </rdf:Seq>
    </darktable:history>
   </rdf:Description>
@@ -298,7 +307,7 @@ def convert_raw_for_tca_or_vignetting(input_file, output_file=None):
 
     if not os.path.isfile(sidecar_file):
         with open(sidecar_file, 'w') as f:
-            f.write(DARKTABLE_TCA_SIDECAR)
+            f.write(DARKTABLE_TCA_VIGNETTING_SIDECAR)
 
     if not os.path.exists(output_file):
         cmd = [
