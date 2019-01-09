@@ -464,12 +464,12 @@ def convert_ppm_for_vignetting(input_file):
     # Convert the ppm file to a pgm (grayscale) file
     if not os.path.exists(output_file):
         cmd = [ "convert",
-                '-colorspace'
-                'RGB'
+                "-colorspace",
+                "RGB",
                 input_file,
-                '-set',
-                'colorspace',
-                'RGB',
+                "-set",
+                "colorspace",
+                "RGB",
                 output_file ]
         try:
             subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
