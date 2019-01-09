@@ -192,6 +192,15 @@ DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:multi_priority="0"
       darktable:blendop_version="7"
       darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+     <rdf:li
+      darktable:operation="colorout"
+      darktable:enabled="1"
+      darktable:modversion="4"
+      darktable:params="gz10eJxjYaAfAAACHAAF"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
     </rdf:Seq>
    </darktable:history>
   </rdf:Description>
@@ -269,6 +278,15 @@ DARKTABLE_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
       darktable:enabled="1"
       darktable:modversion="4"
       darktable:params="gz10eJxjYaA/AAACRAAF"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:blendop_version="7"
+      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+     <rdf:li
+      darktable:operation="colorout"
+      darktable:enabled="1"
+      darktable:modversion="4"
+      darktable:params="gz10eJxjYaAfAAACHAAF"
       darktable:multi_name=""
       darktable:multi_priority="0"
       darktable:blendop_version="7"
@@ -397,8 +415,7 @@ def convert_raw_for_tca(input_file, output_file=None):
                 sidecar_file,
                 output_file,
                 "--core",
-                "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
-                "--conf", "plugins/lighttable/export/iccprofile=linear_rec2020_rgb",
+                "--conf", "plugins/lighttable/export/iccprofile=image",
                 "--conf", "plugins/lighttable/export/style=none",
             ]
         try:
@@ -429,8 +446,7 @@ def convert_raw_for_vignetting(input_file, output_file=None):
                 output_file,
                 "--width", "250",
                 "--core",
-                "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
-                "--conf", "plugins/lighttable/export/iccprofile=linear_rec2020_rgb",
+                "--conf", "plugins/lighttable/export/iccprofile=image",
                 "--conf", "plugins/lighttable/export/style=none",
             ]
         try:
@@ -448,6 +464,8 @@ def convert_ppm_for_vignetting(input_file):
     # Convert the ppm file to a pgm (grayscale) file
     if not os.path.exists(output_file):
         cmd = [ "convert",
+                '-colorspace'
+                'RGB'
                 input_file,
                 '-set',
                 'colorspace',
