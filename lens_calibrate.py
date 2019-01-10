@@ -346,7 +346,7 @@ def image_read_exif(filename):
 
     tag = 'Exif.Photo.FocalLength'
     if has_exif_tag(data, tag):
-        focal_length = int(data[tag].value)
+        focal_length = float(data[tag].value)
     else:
         print("%s doesn't have Exif.Photo.FocalLength set. " % (filename) +
               "Please fix it manually.")
@@ -491,7 +491,7 @@ def create_lenses_config(lenses_exif_group):
                 'type' : 'normal'
                 }
         for exif_data in lenses_exif_group[lenses]:
-            distortion = ("distortion(%dmm)" % exif_data['focal_length'])
+            distortion = ("distortion(%.1fmm)" % exif_data['focal_length'])
             config[lenses][distortion] = '0.0, 0.0, 0.0'
     with open('lenses.conf', 'w') as configfile:
         config.write(configfile)
