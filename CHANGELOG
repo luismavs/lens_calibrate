@@ -1,5 +1,8 @@
 CHANGELOG
 ==========
 
+version 0.0.2 (released 2018-01-10)
+  * Fixed pgm export for vignetting calculation
+
 version 0.0.1 (released 2018-11-15)
   * Initial release
