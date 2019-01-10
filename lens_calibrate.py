@@ -657,10 +657,10 @@ def calculate_vignetting(input_file, exif_data, distance):
                 'focal_length' : exif_data['focal_length'],
                 'aperture' : exif_data['aperture'],
                 'distance' : distance,
-                'A' : A,
-                'k1' : k1,
-                'k2' : k2,
-                'k3' : k3,
+                'A' : ('%.7f' % A),
+                'k1' : ('%.7f' % k1),
+                'k2' : ('%.7f' % k2),
+                'k3' : ('%.7f' % k3),
                 }
     with open(vig_filename, "w") as vigfile:
         vig_config.write(vigfile)
