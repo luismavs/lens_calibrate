@@ -37,7 +37,7 @@ import configparser
 import codecs
 import re
 import math
-import numpy
+import numpy as np
 import struct
 import subprocess
 from subprocess import DEVNULL
@@ -580,6 +580,44 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
 
         print(" DONE", flush=True)
 
+def load_pgm(filename):
+    header = None
+    width = None
+    height = None
+    maxval = None
+
+    with open(filename, 'rb') as f:
+        buf = f.read()
+    try:
+        header, width, height, maxval = re.search(
+            b"(^P5\s(?:\s*#.*[\r\n])*"
+            b"(\d+)\s(?:\s*#.*[\r\n])*"
+            b"(\d+)\s(?:\s*#.*[\r\n])*"
+            b"(\d+)\s(?:\s*#.*[\r\n]\s)*)", buf).groups()
+    except AttributeError:
+        raise ValueError("Not a NetPGM file: '%s'" % filename)
+
+    width = int(width)
+    height = int(height)
+    maxval = int(maxval)
+
+    if maxval == 255:
+        dt = np.dtype(np.uint8)
+    elif maxval == 65535:
+        dt = np.dtype(np.uint16)
+    elif maxval == 4294967295:
+        dt = np.dtype(np.float)
+    else:
+        raise ValueError("Not a NetPGM file: '%s'" % filename)
+    dt = dt.newbyteorder('B')
+
+    shape = np.frombuffer(buf,
+                          dtype = dt,
+                          count = width * height,
+                          offset = len(header))
+
+    return width, height, shape
+
 def fit_function(radius, A, k1, k2, k3):
     return A * (1 + k1 * radius**2 + k2 * radius**4 + k3 * radius**6)
 
@@ -595,29 +633,14 @@ def calculate_vignetting(input_file, exif_data, distance):
 
     print("Generating vignetting data for %s ... " % input_file, end='', flush=True)
 
-    content = ''
-    with open(input_file, 'rb') as f:
-        content = f.read()
+    # This loads the pgm file and we get the image data and an one dimensional array
+    # image_data = [1009, 1036, 1071, 1106, 1140, 1169, 1202, 1239, ...]
+    width, height, image_data = load_pgm(input_file)
 
-    width, height = None, None
-    header_size = 0
-    for i, line in enumerate(content.splitlines(True)):
-        header_size += len(line)
-        if i == 0:
-            assert (line == b"P5\n"), "Wrong image format (must be NetPGM binary)"
-        else:
-            line = line.partition(b"#")[0].strip()
-            if line:
-                if not width:
-                    width, height = line.split()
-                    width, height = int(width), int(height)
-                else:
-                    assert (line == b"65535"), "Wrong grayscale depth: %d (must be 65535)" % (int(line))
-                    break
-
+    # Get the half diagonal of the image
     half_diagonal = math.hypot(width // 2, height // 2)
-    image_data = struct.unpack("!{0}s{1}H".format(header_size, width * height), content)[1:]
 
+    # Calculate the intensity (grey of the grey value at the radius)
     radii, intensities = [], []
     maximal_radius = 1
     for i, intensity in enumerate(image_data):
@@ -642,13 +665,13 @@ def calculate_vignetting(input_file, exif_data, distance):
         bin_index = int(round(radius / maximal_radius * (number_of_bins - 1)))
         bins[bin_index].append(intensity)
     radii = [i / (number_of_bins - 1) * maximal_radius for i in range(number_of_bins)]
-    intensities = [numpy.median(bin) for bin in bins]
+    intensities = [np.median(bin) for bin in bins]
 
     with open(bins_filename, 'w') as f:
         for radius, intensity in zip(radii, intensities):
             f.write("%f %d\n" % (radius, intensity))
 
-    radii, intensities = numpy.array(radii), numpy.array(intensities)
+    radii, intensities = np.array(radii), np.array(intensities)
 
     A, k1, k2, k3 = leastsq(lambda p, x, y: y - fit_function(x, *p), [30000, -0.3, 0, 0], args=(radii, intensities))[0]
 
