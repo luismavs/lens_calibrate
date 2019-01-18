@@ -616,7 +616,7 @@ def load_pgm(filename):
                           count = width * height,
                           offset = len(header))
 
-    return width, height, shape
+    return width, height, shape.reshape((height, width))
 
 def fit_function(radius, A, k1, k2, k3):
     return A * (1 + k1 * radius**2 + k2 * radius**4 + k3 * radius**6)
@@ -639,16 +639,16 @@ def calculate_vignetting(input_file, exif_data, distance):
 
     # Get the half diagonal of the image
     half_diagonal = math.hypot(width // 2, height // 2)
-
-    # Calculate the intensity (grey of the grey value at the radius)
-    radii, intensities = [], []
     maximal_radius = 1
-    for i, intensity in enumerate(image_data):
-        y, x = divmod(i, width)
-        radius = math.hypot(x - width // 2, y - height // 2) / half_diagonal
-        if radius <= maximal_radius:
-            radii.append(radius)
-            intensities.append(intensity)
+
+    # Only remember pixel intensities which are in the given radius
+    radii, intensities = [], []
+    for y in range(image_data.shape[0]):
+        for x in range(image_data.shape[1]):
+            radius = math.hypot(x - width // 2, y - height // 2) / half_diagonal
+            if radius <= maximal_radius:
+                radii.append(radius)
+                intensities.append(image_data[y,x])
 
     with open(all_points_filename, 'w') as f:
         for radius, intensity in zip(radii, intensities):
