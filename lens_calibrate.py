@@ -40,6 +40,7 @@ import math
 import numpy as np
 import struct
 import subprocess
+import shutil
 from subprocess import DEVNULL
 from scipy.optimize.minpack import leastsq
 
@@ -480,6 +481,23 @@ def convert_ppm_for_vignetting(input_file):
 
     return output_file
 
+def plot_pdf(plot_file):
+    try:
+        gnuplot = shutil.which("gnuplot")
+    except shutil.Error:
+        return False
+
+    cmd = [ gnuplot, plot_file ]
+    try:
+        subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError:
+        raise
+    except OSError:
+        print("Could not find gnuplot")
+        return False
+
+    return True
+
 def create_lenses_config(lenses_exif_group):
     config = configparser.ConfigParser()
     for lenses in lenses_exif_group:
@@ -625,6 +643,7 @@ def calculate_vignetting(input_file, original_file, exif_data, distance):
     basename = os.path.splitext(input_file)[0]
     all_points_filename = ("%s.all_points.dat" % basename)
     bins_filename = ("%s.bins.dat" % basename)
+    pdf_filename = ("%s.pdf" % basename)
     gp_filename = ("%s.gp" % basename)
     vig_filename = ("%s.vig" % basename)
 
@@ -690,7 +709,12 @@ def calculate_vignetting(input_file, original_file, exif_data, distance):
 
     if distance == float("inf"):
         distance = "∞"
+
     with codecs.open(gp_filename, "w", encoding="utf-8") as c:
+        c.write('set term pdf\n')
+        c.write('set print "%s"\n' % (input_file))
+        c.write('set output "%s"\n' % (pdf_filename))
+        c.write('set fit logfile "/dev/null"\n')
         c.write('set grid\n')
         c.write('set title "%s, %0.1f mm, f/%0.1f, %s m\\n%s" noenhanced\n' %
                 (exif_data['lens_model'],
@@ -704,7 +728,8 @@ def calculate_vignetting(input_file, original_file, exif_data, distance):
                 bins_filename)
         c.write('%f * (1 + (%f) * x**2 + (%f) * x**4 + (%f) * x**6) title "fit"\n' %
                 (A, k1, k2, k3))
-        c.write('pause -1')
+
+    plot_pdf(gp_filename)
 
     print(" DONE\n", flush=True)
 
