@@ -47,6 +47,8 @@ from scipy.optimize.minpack import leastsq
 from pyexiv2.metadata import ImageMetadata
 from pyexiv2.exif import ExifTag
 
+from PyPDF2 import PdfFileMerger
+
 # Sidecar for loading into hugin
 # Applies a neutral basecurve and enables sharpening
 DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -498,6 +500,27 @@ def plot_pdf(plot_file):
 
     return True
 
+def merge_final_pdf(final_pdf, pdf_dir):
+    pdf_merger = PdfFileMerger()
+
+    pdf_files = []
+
+    for path, directories, files in os.walk(pdf_dir):
+        for filename in files:
+            if os.path.splitext(filename)[1] != '.pdf':
+                continue
+
+            pdf_files.append(filename)
+
+    if len(pdf_files) == 0:
+        return
+
+    for pdf in pdf_files:
+        pdf_merger.append(os.path.join(pdf_dir, pdf))
+
+    pdf_merger.write(final_pdf)
+    pdf_merger.close()
+
 def create_lenses_config(lenses_exif_group):
     config = configparser.ConfigParser()
     for lenses in lenses_exif_group:
@@ -864,6 +887,8 @@ def run_vignetting():
 
             # Calculate vignetting data
             calculate_vignetting(pgm_file, input_file, exif_data, distance)
+
+            merge_final_pdf("vignetting.pdf", "vignetting/exported")
 
 def run_generate_xml():
     print("Generating lensfun.xml")
