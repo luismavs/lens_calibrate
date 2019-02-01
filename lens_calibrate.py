@@ -551,7 +551,7 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
         except subprocess.CalledProcessError:
             raise
         except OSError:
-            print("Could not find darktable-cli")
+            print("Could not find tca_correct")
             return None
 
         tca_data = re.match(r"-r [.0]+:(?P<br>[-.0-9]+):[.0]+:(?P<vr>[-.0-9]+) -b [.0]+:(?P<bb>[-.0-9]+):[.0]+:(?P<vb>[-.0-9]+)",
