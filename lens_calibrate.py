@@ -621,7 +621,7 @@ def load_pgm(filename):
 def fit_function(radius, A, k1, k2, k3):
     return A * (1 + k1 * radius**2 + k2 * radius**4 + k3 * radius**6)
 
-def calculate_vignetting(input_file, exif_data, distance):
+def calculate_vignetting(input_file, original_file, exif_data, distance):
     basename = os.path.splitext(input_file)[0]
     all_points_filename = ("%s.all_points.dat" % basename)
     bins_filename = ("%s.bins.dat" % basename)
@@ -692,9 +692,12 @@ def calculate_vignetting(input_file, exif_data, distance):
         distance = "∞"
     with codecs.open(gp_filename, "w", encoding="utf-8") as c:
         c.write('set grid\n')
-        c.write('set title "%s, %f mm, f/%0.1f, %s m" noenhanced\n' %
-                (exif_data['lens_model'], exif_data['focal_length'],
-                 exif_data['aperture'], distance))
+        c.write('set title "%s, %0.1f mm, f/%0.1f, %s m\\n%s" noenhanced\n' %
+                (exif_data['lens_model'],
+                 exif_data['focal_length'],
+                 exif_data['aperture'],
+                 distance,
+                 original_file))
         c.write('plot "%s" with dots title "samples", ' %
                 all_points_filename)
         c.write('"%s" with linespoints lw 4 title "average", ' %
@@ -835,7 +838,7 @@ def run_vignetting():
             pgm_file = convert_ppm_for_vignetting(output_file)
 
             # Calculate vignetting data
-            calculate_vignetting(pgm_file, exif_data, distance)
+            calculate_vignetting(pgm_file, input_file, exif_data, distance)
 
 def run_generate_xml():
     print("Generating lensfun.xml")
