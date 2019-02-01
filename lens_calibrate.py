@@ -41,6 +41,7 @@ import numpy as np
 import struct
 import subprocess
 import shutil
+import tarfile
 from subprocess import DEVNULL
 from scipy.optimize.minpack import leastsq
 
@@ -1031,6 +1032,39 @@ def run_generate_xml():
             f.write('    </lens>\n')
         f.write('</lensdatabase>\n')
 
+def run_ship():
+    if not os.path.exists("lensfun.xml"):
+        print("lensfun.xml not found, please run the calibration steps first!")
+        return
+
+    files = [ "lensfun.xml", "tca.pdf", "vignetting.pdf" ]
+    tar_name = "lensfun_calibration.tar.xz"
+
+    tar = tarfile.open(tar_name, 'w:xz')
+
+    for f in files:
+        if not os.path.exists(f):
+            continue
+
+        try:
+            tinfo = tar.gettarinfo(name=f)
+
+            tinfo.uid = 0
+            tinfo.gid = 0
+            tinfo.uname = "root"
+            tinfo.gname = "root"
+        except OSError:
+            continue
+
+        fh = open(f, "rb")
+        tar.addfile(tinfo, fileobj=fh)
+        fh.close()
+
+    tar.close()
+
+    print("Created lensfun_calibration.tar.xz")
+    print("Open a bug at https://github.com/lensfun/lensfun/issues/ with the data.")
+
 class CustomDescriptionFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
     pass
 
@@ -1097,9 +1131,15 @@ lensfun.xml file to:
 
     ~/.local/share/lensfun/
 
-Create a bug report or pull request to add the lens to the project at:
+If you want to submit the data to the lensfun project run:
 
-  https://sourceforge.net/p/lensfun/bugs/
+    lens_calibrate.py ship
+
+then create a bug report to add the lens calibration data to the project at:
+
+  https://github.com/lensfun/lensfun/issues/
+
+and provide the lensfun_calibratrion.tar.xz
 
 -----------------------------
 
@@ -1119,7 +1159,8 @@ Create a bug report or pull request to add the lens to the project at:
                             'distortion',
                             'tca',
                             'vignetting',
-                            'generate_xml'],
+                            'generate_xml',
+                            'ship'],
                         help='This runs one of the actions for lens calibration')
 
     args = parser.parse_args()
@@ -1134,6 +1175,8 @@ Create a bug report or pull request to add the lens to the project at:
         run_vignetting()
     elif args.action == 'generate_xml':
         run_generate_xml()
+    elif args.action == 'ship':
+        run_ship()
 
 if __name__ == "__main__":
     main()

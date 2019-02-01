@@ -115,6 +115,15 @@ https://wilson.bronger.org/lensfun_coverage.html
 
 The database is updated daily.
 
-To add lens data to the project please open a bug at:
+To add lens data to the lensfun project first run:
 
-https://sourceforge.net/p/lensfun/features/
+    ./lens_calibrate.py ship
+
+This will create a file `lensfun_calibration.tar.xz` including the xml file and
+the plots showing if the calibration data is valid.
+
+With that tarball please open a bug at
+
+* https://github.com/lensfun/lensfun/issues/
+
+and provide the `lensfun_calibration.tar.xz` file.
