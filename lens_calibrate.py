@@ -578,7 +578,10 @@ def parse_lenses_config(filename):
     return lenses
 
 def tca_correct(input_file, original_file, exif_data, complex_tca=False):
-    output_file = ("%s.tca" % os.path.splitext(input_file)[0])
+    basename = os.path.splitext(input_file)[0]
+    output_file = ("%s.tca" % basename)
+    gp_filename = ("%s.gp" % basename)
+    pdf_filename = ("%s.pdf" % basename)
 
     if not os.path.exists(output_file):
         print("Running TCA corrections for %s ..." % (input_file), end='', flush=True)
@@ -612,12 +615,21 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
             tca_config.write(tcafile)
 
         if complex_tca:
-            gp_file = ("%s.gp" % output_file)
-            with open(gp_file, "w") as f:
-                f.write('set title "%s" noenhanced\n' % original_file)
-                f.write('plot [0:1.8] %s * x**2 + %s title "red", %s * x**2 + %s title "blue"\n' %
+            with codecs.open(gp_filename, "w", encoding="utf-8") as c:
+                c.write('set term pdf\n')
+                c.write('set print "%s"\n' % (input_file))
+                c.write('set output "%s"\n' % (pdf_filename))
+                c.write('set fit logfile "/dev/null"\n')
+                c.write('set grid\n')
+                c.write('set title "%s, %0.1f mm, f/%0.1f\\n%s" noenhanced\n' %
+                        (exif_data['lens_model'],
+                         exif_data['focal_length'],
+                         exif_data['aperture'],
+                         original_file))
+                c.write('plot [0:1.8] %s * x**2 + %s title "red", %s * x**2 + %s title "blue"\n' %
                         (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
-                f.write('pause -1')
+
+            plot_pdf(gp_filename)
 
         print(" DONE", flush=True)
 
@@ -841,6 +853,9 @@ def run_tca(complex_tca):
             output_file = convert_raw_for_tca(input_file, output_file)
 
             tca_correct(output_file, input_file, exif_data, complex_tca)
+
+            if complex_tca:
+                merge_final_pdf("tca.pdf", "tca/exported")
 
 def run_vignetting():
     if not os.path.isdir("vignetting"):
