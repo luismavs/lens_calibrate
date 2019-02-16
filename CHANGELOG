@@ -1,7 +1,15 @@
 CHANGELOG
 ==========
 
-version 0.0.2 (released 2018-01-10)
+version 0.1.0 (released 2019-02-16)
+  * Generate pdfs for complex tca and vignetting correction
+  * Add 'ship' option to generate tarball
+  * Improved vignetting code
+
+version 0.0.3 (released 2019-01-10)
+  * Use float for storing focal_length
+
+version 0.0.2 (released 2019-01-10)
   * Fixed pgm export for vignetting calculation
 
 version 0.0.1 (released 2018-11-15)
