@@ -25,10 +25,12 @@
 # Requires: python3-exiv2
 # Requires: python3-numpy
 # Requires: python3-scipy
+# Requires: python3-PyPDF2
 #
 # Requires: darktable (darktable-cli)
 # Requires: hugin-tools (tca_correct)
 # Requires: ImageMagick (convert)
+# Requires: gnuplot
 #
 
 import os
