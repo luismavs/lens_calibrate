@@ -889,7 +889,7 @@ def run_vignetting():
                 except:
                     continue
 
-            # Convert RAW files to tiff for tca_correct
+            # Convert RAW files to NetPGM
             input_file = os.path.join(path, filename)
 
             # Read EXIF data
