@@ -897,6 +897,7 @@ def run_vignetting():
 
             # Convert the RAW file to ppm
             output_file = os.path.join(export_path, ("%s.ppm" % os.path.splitext(filename)[0]))
+            preview_file = os.path.join(export_path, ("%s.jpg" % os.path.splitext(filename)[0]))
 
             print("Processing %s ... " % (input_file), flush=True)
 
@@ -909,6 +910,9 @@ def run_vignetting():
             calculate_vignetting(pgm_file, input_file, exif_data, distance)
 
             merge_final_pdf("vignetting.pdf", "vignetting/exported")
+
+            # Create preview jpg
+            convert_raw_for_vignetting(input_file, preview_file)
 
 def run_generate_xml():
     print("Generating lensfun.xml")
@@ -1041,12 +1045,21 @@ def run_ship():
         print("lensfun.xml not found, please run the calibration steps first!")
         return
 
-    files = [ "lensfun.xml", "tca.pdf", "vignetting.pdf" ]
+    tar_files = [ "lensfun.xml", "tca.pdf", "vignetting.pdf" ]
     tar_name = "lensfun_calibration.tar.xz"
+
+    vignetting_dir = 'vignetting/exported'
+    if os.path.exists(vignetting_dir):
+        for path, directories, files in os.walk(vignetting_dir):
+            for filename in files:
+                if os.path.splitext(filename)[1] != '.jpg':
+                    continue
+
+                tar_files.append(os.path.join(vignetting_dir, filename))
 
     tar = tarfile.open(tar_name, 'w:xz')
 
-    for f in files:
+    for f in tar_files:
         if not os.path.exists(f):
             continue
 
