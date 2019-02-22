@@ -653,6 +653,8 @@ def load_pgm(filename):
     except AttributeError:
         raise ValueError("Not a NetPGM file: '%s'" % filename)
 
+    f.close()
+
     width = int(width)
     height = int(height)
     maxval = int(maxval)
