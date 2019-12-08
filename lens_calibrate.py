@@ -864,7 +864,7 @@ def run_tca(complex_tca):
 
 def run_vignetting():
     if not os.path.isdir("vignetting"):
-        print("No tca directory, you have to run init first!")
+        print("No vingetting directory, you have to run init first!")
         return
     export_path = os.path.join("vignetting", "exported")
 
