@@ -5,7 +5,7 @@
 # A script to calibrate camera lenes for lensfun
 #
 # Copyright (c) 2012-2016 Torsten Bronger <bronger@physik.rwth-aachen.de>
-# Copyright (c)      2018 Andreas Schneider <asn@cryptomilk.org>
+# Copyright (c) 2018-2019 Andreas Schneider <asn@cryptomilk.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

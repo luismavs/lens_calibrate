@@ -1,6 +1,11 @@
 CHANGELOG
 ==========
 
+version 0.1.1 (released 2019-12-08)
+  * Create preview files for vignetting
+  * Added vignetting files to the tarball
+  * Fix closing NetPGM files
+
 version 0.1.0 (released 2019-02-16)
   * Generate pdfs for complex tca and vignetting correction
   * Add 'ship' option to generate tarball
