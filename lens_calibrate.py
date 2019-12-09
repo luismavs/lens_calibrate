@@ -454,24 +454,30 @@ def convert_raw_for_vignetting(input_file, sidecar_file, output_file=None):
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        # TODO: Ask for clarification for such a small image size for vignetting!
-        # Is this some normalization?
-        cmd = [
-                "darktable-cli",
-                input_file,
-                sidecar_file,
-                output_file,
-                "--width", "250",
-                "--core",
-                "--conf", "plugins/lighttable/export/iccprofile=image",
-                "--conf", "plugins/lighttable/export/style=none",
-            ]
-        try:
-            subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
-            raise
-        except OSError:
-            print("Could not find darktable-cli")
+        with tempfile.TemporaryDirectory(prefix="lenscal_") as dt_tmp_dir:
+            dt_log_path = os.path.join(dt_tmp_dir, "dt.log")
+
+            with open(dt_log_path, 'w') as dt_log_file:
+                cmd = [
+                        "darktable-cli",
+                        input_file,
+                        sidecar_file,
+                        output_file,
+                        "--width", "250",
+                        "--core",
+                        "--configdir", dt_tmp_dir,
+                        "--conf", "plugins/lighttable/export/iccprofile=image",
+                        "--conf", "plugins/lighttable/export/style=none",
+                    ]
+
+                try:
+                    subprocess.check_call(cmd, stdout=dt_log_file, stderr=subprocess.STDOUT)
+                except subprocess.CalledProcessError:
+                    with open(dt_log_path, 'r') as fin:
+                        print(fin.read())
+                    raise
+                except OSError:
+                    print("Could not find darktable-cli")
 
     return output_file
 
@@ -701,7 +707,7 @@ def calculate_vignetting(input_file, original_file, exif_data, distance):
     if os.path.exists(vig_filename):
         return
 
-    print("Generating vignetting data for %s ... " % input_file, end='', flush=True)
+    print("Generating vignetting data for %s ... " % input_file, flush=True)
 
     # This loads the pgm file and we get the image data and an one dimensional array
     # image_data = [1009, 1036, 1071, 1106, 1140, 1169, 1202, 1239, ...]
@@ -781,8 +787,6 @@ def calculate_vignetting(input_file, original_file, exif_data, distance):
                 (A, k1, k2, k3))
 
     plot_pdf(gp_filename)
-
-    print(" DONE\n", flush=True)
 
 def init():
     # Create directory structure
@@ -964,26 +968,35 @@ def run_vignetting():
         print("Failed to write sidecar_file: %s" % sidecar_file)
         return
 
-    for path, directories, files in os.walk('vignetting'):
-        for filename in files:
-            distance = float("inf")
+    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+        result_futures = []
 
-            if not is_raw_file(filename):
-                continue
+        for path, directories, files in os.walk('vignetting'):
+            for filename in files:
+                distance = float("inf")
 
-            # Ignore the export path
-            if path == export_path:
-                continue
-
-            if path != "vignetting":
-                d = os.path.basename(path)
-                try:
-                    distance = float(d)
-                except:
+                if not is_raw_file(filename):
                     continue
 
-            create_vignetting_correction(export_path, path, filename, sidecar_file, distance)
+                # Ignore the export path
+                if path == export_path:
+                    continue
 
+                if path != "vignetting":
+                    d = os.path.basename(path)
+                    try:
+                        distance = float(d)
+                    except:
+                        continue
+
+                future = executor.submit(create_vignetting_correction, export_path, path, filename, sidecar_file, distance)
+                result_futures.append(future)
+
+        for f in concurrent.futures.as_completed(result_futures):
+            if f.result():
+                print("OK")
+
+    # Create final PDF
     merge_final_pdf("vignetting.pdf", "vignetting/exported")
 
 def run_generate_xml():
