@@ -410,14 +410,9 @@ def convert_raw_for_distortion(input_file, sidecar_file, output_file=None):
 
     return output_file
 
-def convert_raw_for_tca(input_file, output_file=None):
+def convert_raw_for_tca(input_file, sidecar_file, output_file=None):
     if output_file is None:
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
-    sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
-
-    if not os.path.isfile(sidecar_file):
-        with open(sidecar_file, 'w') as f:
-            f.write(DARKTABLE_TCA_SIDECAR)
 
     if not os.path.exists(output_file):
         cmd = [
@@ -852,8 +847,14 @@ def run_tca(complex_tca):
         print("No tca directory, you have to run init first!")
         return
 
-    if not os.path.isdir("tca/exported"):
-        os.mkdir("tca/exported")
+    export_path = os.path.join("tca", "exported")
+    if not os.path.isdir(export_path):
+        os.mkdir(export_path)
+
+    sidecar_file = os.path.join(export_path, "tca.xmp")
+    if not write_sidecar_file(sidecar_file, DARKTABLE_DISTORTION_SIDECAR):
+        print("Failed to write sidecar_file: %s" % sidecar_file)
+        return
 
     for path, directories, files in os.walk('tca'):
         for filename in files:
@@ -868,7 +869,7 @@ def run_tca(complex_tca):
             exif_data = image_read_exif(input_file)
 
             output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_for_tca(input_file, output_file)
+            output_file = convert_raw_for_tca(input_file, sidecar_file, output_file)
 
             tca_correct(output_file, input_file, exif_data, complex_tca)
 
