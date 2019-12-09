@@ -433,14 +433,9 @@ def convert_raw_for_tca(input_file, sidecar_file, output_file=None):
 
     return output_file
 
-def convert_raw_for_vignetting(input_file, output_file=None):
+def convert_raw_for_vignetting(input_file, sidecar_file, output_file=None):
     if output_file is None:
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
-    sidecar_file = (os.path.join(os.path.dirname(output_file), "darktable.xmp"))
-
-    if not os.path.isfile(sidecar_file):
-        with open(sidecar_file, 'w') as f:
-            f.write(DARKTABLE_VIGNETTING_SIDECAR)
 
     if not os.path.exists(output_file):
         # TODO: Ask for clarification for such a small image size for vignetting!
@@ -880,10 +875,15 @@ def run_vignetting():
     if not os.path.isdir("vignetting"):
         print("No vingetting directory, you have to run init first!")
         return
-    export_path = os.path.join("vignetting", "exported")
 
-    if not os.path.isdir("vignetting/exported"):
-        os.mkdir("vignetting/exported")
+    export_path = os.path.join("vignetting", "exported")
+    if not os.path.isdir(export_path):
+        os.mkdir(export_path)
+
+    sidecar_file = os.path.join(export_path, "vignetting.xmp")
+    if not write_sidecar_file(sidecar_file, DARKTABLE_DISTORTION_SIDECAR):
+        print("Failed to write sidecar_file: %s" % sidecar_file)
+        return
 
     for path, directories, files in os.walk('vignetting'):
         for filename in files:
@@ -915,7 +915,7 @@ def run_vignetting():
 
             print("Processing %s ... " % (input_file), flush=True)
 
-            output_file = convert_raw_for_vignetting(input_file, output_file)
+            output_file = convert_raw_for_vignetting(input_file, sidecar_file, output_file)
 
             # Create vignetting PGM files (grayscale)
             pgm_file = convert_ppm_for_vignetting(output_file)
@@ -926,7 +926,7 @@ def run_vignetting():
             merge_final_pdf("vignetting.pdf", "vignetting/exported")
 
             # Create preview jpg
-            convert_raw_for_vignetting(input_file, preview_file)
+            convert_raw_for_vignetting(input_file, sidecar_file, preview_file)
 
 def run_generate_xml():
     print("Generating lensfun.xml")
