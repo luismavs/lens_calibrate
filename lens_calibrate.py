@@ -557,7 +557,7 @@ def create_lenses_config(lenses_exif_group):
     print("")
     print("You can find details for distortion calculations here:")
     print("")
-    print("https://hackmd.io/s/SkOIRlr5z#")
+    print("https://pixls.us/articles/create-lens-calibration-data-for-lensfun/")
 
     return
 
