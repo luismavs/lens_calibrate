@@ -368,15 +368,20 @@ def image_read_exif(filename):
              "focal_length" : focal_length,
              "aperture" : aperture }
 
+def write_sidecar_file(sidecar_file, content):
+    if not os.path.isfile(sidecar_file):
+        try:
+            with open(sidecar_file, 'w') as f:
+                f.write(content)
+        except OSError:
+            return False
+
+    return True
+
 # convert raw file to 16bit tiff
-def convert_raw_for_distortion(input_file, output_file=None):
+def convert_raw_for_distortion(input_file, sidecar_file, output_file=None):
     if output_file is None:
         output_file = ("%s.tif" % os.path.splitext(input_file)[0])
-    sidecar_file = (os.path.join(os.path.dirname(output_file), "distortion.xmp"))
-
-    if not os.path.isfile(sidecar_file):
-        with open(sidecar_file, 'w') as f:
-            f.write(DARKTABLE_DISTORTION_SIDECAR)
 
     if not os.path.exists(output_file):
         print("Converting %s to %s ..." % (input_file, output_file), end='', flush=True)
@@ -802,8 +807,14 @@ def run_distortion():
         print("No distortion directory, you have to run init first!")
         return
 
-    if not os.path.isdir("distortion/exported"):
-        os.mkdir("distortion/exported")
+    export_path = os.path.join("distortion", "exported")
+    if not os.path.isdir(export_path):
+        os.mkdir(export_path)
+
+    sidecar_file = os.path.join(export_path, "distortion.xmp")
+    if not write_sidecar_file(sidecar_file, DARKTABLE_DISTORTION_SIDECAR):
+        print("Failed to write sidecar_file: %s" % sidecar_file)
+        return
 
     for path, directories, files in os.walk('distortion'):
         for filename in files:
@@ -826,7 +837,7 @@ def run_distortion():
                     output_file = os.path.join(path, "exported", ("%s_%dmm.tif" % (os.path.splitext(filename)[0], exif_data['focal_length'])))
 
             # Convert RAW files to TIF for hugin
-            output_file = convert_raw_for_distortion(input_file, output_file)
+            output_file = convert_raw_for_distortion(input_file, sidecar_file, output_file)
 
     if not lenses_config_exists:
         sorted_lenses_exif_group = {}
