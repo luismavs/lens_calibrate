@@ -990,11 +990,11 @@ def run_generate_xml():
             for focal_length in sorted(focal_lengths, key=float):
                 data = list(map(str.strip, lenses[lens_model]['distortion'][focal_length].split(',')))
                 if data[1] is None:
-                    f.write('           '
+                    f.write('            '
                             '<distortion model="poly3" focal="%s" k1="%s" />\n' %
                             (focal_length, data[0]))
                 else:
-                    f.write('           '
+                    f.write('            '
                             '<distortion model="ptlens" focal="%s" a="%s" b="%s" c="%s" />\n' %
                             (focal_length, data[0], data[1], data[2]))
 
@@ -1003,11 +1003,11 @@ def run_generate_xml():
             for focal_length in sorted(focal_lengths, key=float):
                 data = lenses[lens_model]['tca'][focal_length]
                 if data['complex_tca'] == 'True':
-                    f.write('           '
+                    f.write('            '
                             '<tca model="poly3" focal="%s" br="%s" vr="%s" bb="%s" vb="%s" />\n' %
                             (focal_length, data['br'], data['vr'], data['bb'], data['vb']))
                 else:
-                    f.write('           '
+                    f.write('            '
                             '<tca model="poly3" focal="%s" vr="%s" vb="%s" />\n' %
                             (focal_length, data['vr'], data['vb']))
 
@@ -1030,7 +1030,7 @@ def run_generate_xml():
                             _distances = [ '10', '1000' ]
 
                         for _distance in _distances:
-                            f.write('           '
+                            f.write('            '
                                     '<vignetting model="pa" focal="%s" aperture="%s" distance="%s" '
                                     'k1="%s" k2="%s" k3="%s" />\n' %
                                     (focal_length, aperture, _distance,
