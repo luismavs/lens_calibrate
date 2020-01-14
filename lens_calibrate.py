@@ -518,6 +518,8 @@ def merge_final_pdf(final_pdf, pdf_dir):
     if len(pdf_files) == 0:
         return
 
+    pdf_files.sort()
+
     for pdf in pdf_files:
         pdf_merger.append(os.path.join(pdf_dir, pdf))
 
