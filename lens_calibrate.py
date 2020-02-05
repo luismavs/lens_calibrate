@@ -844,6 +844,23 @@ def run_distortion():
 
         create_lenses_config(sorted_lenses_exif_group)
 
+def create_tca_correction(export_path, path, filename, sidecar_file, complex_tca):
+    # Convert RAW
+    input_file = os.path.join(path, filename)
+
+    # Read EXIF data
+    exif_data = image_read_exif(input_file)
+
+    # Convert RAW file to ppm
+    output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
+
+    print("Processing %s ... " % (input_file), flush=True)
+    output_file = convert_raw_for_tca(input_file, sidecar_file, output_file)
+
+    tca_correct(output_file, input_file, exif_data, complex_tca)
+
+    return True
+
 def run_tca(complex_tca):
     if not os.path.isdir("tca"):
         print("No tca directory, you have to run init first!")
@@ -865,18 +882,10 @@ def run_tca(complex_tca):
             if not is_raw_file(filename):
                 continue
 
-            # Convert RAW files to tiff for tca_correct
-            input_file = os.path.join(path, filename)
+            create_tca_correction(export_path, path, filename, sidecar_file, complex_tca)
 
-            exif_data = image_read_exif(input_file)
-
-            output_file = os.path.join(path, "exported", ("%s.ppm" % os.path.splitext(filename)[0]))
-            output_file = convert_raw_for_tca(input_file, sidecar_file, output_file)
-
-            tca_correct(output_file, input_file, exif_data, complex_tca)
-
-            if complex_tca:
-                merge_final_pdf("tca.pdf", "tca/exported")
+    if complex_tca:
+        merge_final_pdf("tca.pdf", "tca/exported")
 
 def run_vignetting():
     if not os.path.isdir("vignetting"):
