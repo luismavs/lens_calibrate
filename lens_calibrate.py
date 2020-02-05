@@ -61,65 +61,57 @@ DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
     xmlns:xmp="http://ns.adobe.com/xap/1.0/"
     xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:darktable="http://darktable.sf.net/"
+   exif:DateTimeOriginal="2019:05:01 16:01:36"
    xmp:Rating="1"
-   xmpMM:DerivedFrom="DISTORTION.ARW"
-   darktable:xmp_version="2"
+   xmpMM:DerivedFrom="distortion.img"
+   darktable:xmp_version="3"
    darktable:raw_params="0"
    darktable:auto_presets_applied="1"
-   darktable:history_end="3">
-   <darktable:mask_id>
+   darktable:history_end="3"
+   darktable:iop_order_version="2">
+   <darktable:masks_history>
     <rdf:Seq/>
-   </darktable:mask_id>
-   <darktable:mask_type>
-    <rdf:Seq/>
-   </darktable:mask_type>
-   <darktable:mask_name>
-    <rdf:Seq/>
-   </darktable:mask_name>
-   <darktable:mask_version>
-    <rdf:Seq/>
-   </darktable:mask_version>
-   <darktable:mask>
-    <rdf:Seq/>
-   </darktable:mask>
-   <darktable:mask_nb>
-    <rdf:Seq/>
-   </darktable:mask_nb>
-   <darktable:mask_src>
-    <rdf:Seq/>
-   </darktable:mask_src>
+   </darktable:masks_history>
    <darktable:history>
     <rdf:Seq>
      <rdf:li
-      darktable:operation="sharpen"
-      darktable:enabled="1"
-      darktable:modversion="1"
-      darktable:params="000000400000003f0000003f"
-      darktable:multi_name=""
-      darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
-     <rdf:li
-      darktable:operation="flip"
-      darktable:enabled="1"
-      darktable:modversion="2"
-      darktable:params="ffffffff"
-      darktable:multi_name=""
-      darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
-     <rdf:li
+      darktable:num="0"
       darktable:operation="basecurve"
       darktable:enabled="1"
-      darktable:modversion="5"
-      darktable:params="gz09eJxjYIAAruuLrbmuK1vPmilpN2vmTLuzZ87YGRsb2zMwONgbGxcD6QYoHgVDCbAhsZkwZCFxCgBDtg6p"
+      darktable:modversion="6"
+      darktable:params="gz09eJxjYIAAruuLrbmuK1vPmilpN2vmTLuzZ87YGRsb2zMwONgbGxcD6QYoHgVDCbAhsZkwZBFxCgB+Wg6p"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="23.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
+     <rdf:li
+      darktable:num="1"
+      darktable:operation="colorin"
+      darktable:enabled="1"
+      darktable:modversion="6"
+      darktable:params="gz48eJzjYRgFowABWAbaAaNgwAEAPRQAEQ=="
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:iop_order="27.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
+     <rdf:li
+      darktable:num="2"
+      darktable:operation="colorout"
+      darktable:enabled="1"
+      darktable:modversion="5"
+      darktable:params="gz35eJxjZBgFo4CBAQAEEAAC"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:iop_order="58.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
     </rdf:Seq>
    </darktable:history>
   </rdf:Description>
@@ -128,88 +120,92 @@ DARKTABLE_DISTORTION_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 '''
 
 # Sidecar for TCA corrections
-# Disables the basecurve and sharpening and sets input to Linear Rec2020 RGB
+#
+# * disable basecurve
+# * disable shapren
+# * disable highlight reconstruction
+# * set colorin to Linear Rec2020 RGB
+# * set colorin working space to Linear Rec2020 RGB
+# * set colorout to Linear Rec2020 RGB
+#
+# Setting colorin and colorout to Linear Rec2020 RGB makes it basically a no-op
+# and passes through camera RGB values.
 DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
     xmlns:xmp="http://ns.adobe.com/xap/1.0/"
     xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
     xmlns:darktable="http://darktable.sf.net/"
+   exif:DateTimeOriginal="2017:09:30 20:09:00"
    xmp:Rating="1"
-   xmpMM:DerivedFrom="TCA.ARW"
-   darktable:xmp_version="2"
+   xmpMM:DerivedFrom="tca.img"
+   darktable:xmp_version="3"
    darktable:raw_params="0"
    darktable:auto_presets_applied="1"
-   darktable:history_end="4">
-   <darktable:mask_id>
+   darktable:history_end="5"
+   darktable:iop_order_version="2">
+   <darktable:masks_history>
     <rdf:Seq/>
-   </darktable:mask_id>
-   <darktable:mask_type>
-    <rdf:Seq/>
-   </darktable:mask_type>
-   <darktable:mask_name>
-    <rdf:Seq/>
-   </darktable:mask_name>
-   <darktable:mask_version>
-    <rdf:Seq/>
-   </darktable:mask_version>
-   <darktable:mask>
-    <rdf:Seq/>
-   </darktable:mask>
-   <darktable:mask_nb>
-    <rdf:Seq/>
-   </darktable:mask_nb>
-   <darktable:mask_src>
-    <rdf:Seq/>
-   </darktable:mask_src>
+   </darktable:masks_history>
    <darktable:history>
     <rdf:Seq>
      <rdf:li
-      darktable:operation="flip"
-      darktable:enabled="1"
-      darktable:modversion="2"
-      darktable:params="ffffffff"
-      darktable:multi_name=""
-      darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
-     <rdf:li
+      darktable:num="0"
       darktable:operation="basecurve"
       darktable:enabled="0"
-      darktable:modversion="5"
-      darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpCFxCkAdoEQ3Q=="
+      darktable:modversion="6"
+      darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpBFxCkAufUQ3Q=="
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="23.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
      <rdf:li
+      darktable:num="1"
       darktable:operation="sharpen"
       darktable:enabled="0"
       darktable:modversion="1"
       darktable:params="000000400000003f0000003f"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="53.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
      <rdf:li
+      darktable:num="2"
+      darktable:operation="highlights"
+      darktable:enabled="0"
+      darktable:modversion="2"
+      darktable:params="000000000000803f00000000000000000000803f"
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:iop_order="4.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
+     <rdf:li
+      darktable:num="3"
       darktable:operation="colorin"
       darktable:enabled="1"
-      darktable:modversion="4"
-      darktable:params="gz10eJxjYaA/AAACRAAF"
+      darktable:modversion="6"
+      darktable:params="gz48eJxjYRgFowABWAbaAaNgwAEAHHQACQ=="
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="27.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
      <rdf:li
+      darktable:num="4"
       darktable:operation="colorout"
       darktable:enabled="1"
-      darktable:modversion="4"
-      darktable:params="gz10eJxjYaAfAAACHAAF"
+      darktable:modversion="5"
+      darktable:params="gz35eJxjYRgFo4CBAQAKKAAF"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="58.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
     </rdf:Seq>
    </darktable:history>
   </rdf:Description>
@@ -218,88 +214,88 @@ DARKTABLE_TCA_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 '''
 
 # Sidecar for vignetting corrections
-# Disables the basecurve and sharpening and sets input to Linear Rec2020 RGB
+# * disable basecurve
+# * disable shapren
+# * disable highlight reconstruction
+# * set colorin to camera color matrix
+# * set colorin working space to Linear Rec2020 RGB
+# * set colorout to Linear Rec2020 RGB
 DARKTABLE_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
     xmlns:xmp="http://ns.adobe.com/xap/1.0/"
     xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
     xmlns:darktable="http://darktable.sf.net/"
+   exif:DateTimeOriginal="2017:09:30 20:09:00"
    xmp:Rating="1"
-   xmpMM:DerivedFrom="TCA.ARW"
-   darktable:xmp_version="2"
+   xmpMM:DerivedFrom="vignetting.img"
+   darktable:xmp_version="3"
    darktable:raw_params="0"
    darktable:auto_presets_applied="1"
-   darktable:history_end="4">
-   <darktable:mask_id>
+   darktable:history_end="5"
+   darktable:iop_order_version="2">
+   <darktable:masks_history>
     <rdf:Seq/>
-   </darktable:mask_id>
-   <darktable:mask_type>
-    <rdf:Seq/>
-   </darktable:mask_type>
-   <darktable:mask_name>
-    <rdf:Seq/>
-   </darktable:mask_name>
-   <darktable:mask_version>
-    <rdf:Seq/>
-   </darktable:mask_version>
-   <darktable:mask>
-    <rdf:Seq/>
-   </darktable:mask>
-   <darktable:mask_nb>
-    <rdf:Seq/>
-   </darktable:mask_nb>
-   <darktable:mask_src>
-    <rdf:Seq/>
-   </darktable:mask_src>
+   </darktable:masks_history>
    <darktable:history>
     <rdf:Seq>
      <rdf:li
-      darktable:operation="flip"
-      darktable:enabled="1"
-      darktable:modversion="2"
-      darktable:params="ffffffff"
-      darktable:multi_name=""
-      darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
-     <rdf:li
+      darktable:num="0"
       darktable:operation="basecurve"
       darktable:enabled="0"
-      darktable:modversion="5"
-      darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpCFxCkAdoEQ3Q=="
+      darktable:modversion="6"
+      darktable:params="gz09eJxjYICAL3eYbKcsErU1fXPdVmRLpl1B+T07pyon+6WC0fb9R6rtGRgaoHgUDCXAhsRmwpBFxCkAufUQ3Q=="
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="23.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
      <rdf:li
+      darktable:num="1"
       darktable:operation="sharpen"
       darktable:enabled="0"
       darktable:modversion="1"
       darktable:params="000000400000003f0000003f"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="53.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
      <rdf:li
-      darktable:operation="colorin"
-      darktable:enabled="1"
-      darktable:modversion="4"
-      darktable:params="gz10eJxjYaA/AAACRAAF"
+      darktable:num="2"
+      darktable:operation="highlights"
+      darktable:enabled="0"
+      darktable:modversion="2"
+      darktable:params="000000000000803f00000000000000000000803f"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="4.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
      <rdf:li
+      darktable:num="3"
       darktable:operation="colorout"
       darktable:enabled="1"
-      darktable:modversion="4"
-      darktable:params="gz10eJxjYaAfAAACHAAF"
+      darktable:modversion="5"
+      darktable:params="gz35eJxjYRgFo4CBAQAKKAAF"
       darktable:multi_name=""
       darktable:multi_priority="0"
-      darktable:blendop_version="7"
-      darktable:blendop_params="gz12eJxjYGBgkGAAgRNODESDBnsIHll8ANNSGQM="/>
+      darktable:iop_order="58.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
+     <rdf:li
+      darktable:num="4"
+      darktable:operation="colorin"
+      darktable:enabled="1"
+      darktable:modversion="6"
+      darktable:params="gz48eJzjZhgFowABWAbaAaNgwAEAOQAAEA=="
+      darktable:multi_name=""
+      darktable:multi_priority="0"
+      darktable:iop_order="27.0000000000000"
+      darktable:blendop_version="9"
+      darktable:blendop_params="gz11eJxjYGBgkGAAgRNODGiAEV0AJ2iwh+CRyscOAAdeGQQ="/>
     </rdf:Seq>
    </darktable:history>
   </rdf:Description>
