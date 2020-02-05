@@ -44,6 +44,8 @@ import struct
 import subprocess
 import shutil
 import tarfile
+import tempfile
+import concurrent.futures
 from subprocess import DEVNULL
 from scipy.optimize.minpack import leastsq
 
@@ -384,29 +386,35 @@ def convert_raw_for_distortion(input_file, sidecar_file, output_file=None):
         output_file = ("%s.tif" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        print("Converting %s to %s ..." % (input_file, output_file), end='', flush=True)
+        print("Converting %s to %s ..." % (input_file, output_file), flush=True)
 
-        cmd = [
-                "darktable-cli",
-                input_file,
-                sidecar_file,
-                output_file,
-                "--core",
-                "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
-                "--conf", "plugins/lighttable/export/iccprofile=sRGB",
-                "--conf", "plugins/lighttable/export/style=none",
-                "--conf", "plugins/imageio/format/tiff/bpp=16",
-                "--conf", "plugins/imageio/format/tiff/compress=5"
-            ]
-        try:
-            subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
-            raise
-        except OSError:
-            print("Could not find darktable-cli")
-            return None
+        with tempfile.TemporaryDirectory(prefix="lenscal_") as dt_tmp_dir:
+            dt_log_path = os.path.join(dt_tmp_dir, "dt.log")
 
-        print(" DONE", flush=True)
+            with open(dt_log_path, 'w') as dt_log_file:
+                cmd = [
+                        "darktable-cli",
+                        input_file,
+                        sidecar_file,
+                        output_file,
+                        "--core",
+                        "--configdir", dt_tmp_dir,
+                        "--conf", "plugins/lighttable/export/iccintent=0", # perceptual
+                        "--conf", "plugins/lighttable/export/iccprofile=sRGB",
+                        "--conf", "plugins/lighttable/export/style=none",
+                        "--conf", "plugins/imageio/format/tiff/bpp=16",
+                        "--conf", "plugins/imageio/format/tiff/compress=5"
+                    ]
+
+                try:
+                    subprocess.check_call(cmd, stdout=dt_log_file, stderr=subprocess.STDOUT)
+                except subprocess.CalledProcessError:
+                    with open(dt_log_path, 'r') as fin:
+                        print(fin.read())
+                    raise
+                except OSError:
+                    print("Could not find darktable-cli")
+                    return None
 
     return output_file
 
@@ -815,6 +823,7 @@ def run_distortion():
         print("Failed to write sidecar_file: %s" % sidecar_file)
         return
 
+    # Parse EXIF data
     for path, directories, files in os.walk('distortion'):
         for filename in files:
             if path != "distortion":
@@ -834,7 +843,22 @@ def run_distortion():
                 if exif_data['focal_length'] > 1.0:
                     output_file = os.path.join(path, "exported", ("%s_%dmm.tif" % (os.path.splitext(filename)[0], exif_data['focal_length'])))
 
-            create_distortion_correction(export_path, path, filename, sidecar_file)
+    # Create TIFF for hugin
+    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+        result_futures = []
+
+        for path, directories, files in os.walk('distortion'):
+            for filename in files:
+                if path != "distortion":
+                    continue
+                if not is_raw_file(filename):
+                    continue
+                future = executor.submit(create_distortion_correction, export_path, path, filename, sidecar_file)
+                result_futures.append(future)
+
+        for f in concurrent.futures.as_completed(result_futures):
+            if f.result():
+                print("OK")
 
     if not lenses_config_exists:
         sorted_lenses_exif_group = {}
