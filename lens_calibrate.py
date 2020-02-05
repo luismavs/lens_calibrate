@@ -423,21 +423,29 @@ def convert_raw_for_tca(input_file, sidecar_file, output_file=None):
         output_file = ("%s.ppm" % os.path.splitext(input_file)[0])
 
     if not os.path.exists(output_file):
-        cmd = [
-                "darktable-cli",
-                input_file,
-                sidecar_file,
-                output_file,
-                "--core",
-                "--conf", "plugins/lighttable/export/iccprofile=image",
-                "--conf", "plugins/lighttable/export/style=none",
-            ]
-        try:
-            subprocess.check_call(cmd, stdout=DEVNULL, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
-            raise
-        except OSError:
-            print("Could not find darktable-cli")
+        with tempfile.TemporaryDirectory(prefix="lenscal_") as dt_tmp_dir:
+            dt_log_path = os.path.join(dt_tmp_dir, "dt.log")
+
+            with open(dt_log_path, 'w') as dt_log_file:
+                cmd = [
+                        "darktable-cli",
+                        input_file,
+                        sidecar_file,
+                        output_file,
+                        "--core",
+                        "--configdir", dt_tmp_dir,
+                        "--conf", "plugins/lighttable/export/iccprofile=image",
+                        "--conf", "plugins/lighttable/export/style=none",
+                    ]
+
+                try:
+                    subprocess.check_call(cmd, stdout=dt_log_file, stderr=subprocess.STDOUT)
+                except subprocess.CalledProcessError:
+                    with open(dt_log_path, 'r') as fin:
+                        print(fin.read())
+                    raise
+                except OSError:
+                    print("Could not find darktable-cli")
 
     return output_file
 
@@ -592,7 +600,7 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
     pdf_filename = ("%s.pdf" % basename)
 
     if not os.path.exists(output_file):
-        print("Running TCA corrections for %s ..." % (input_file), end='', flush=True)
+        print("Running TCA corrections for %s ..." % (input_file), flush=True)
 
         tca_complexity = 'v'
         if complex_tca:
@@ -638,8 +646,6 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
                         (tca_data['br'], tca_data["vr"], tca_data["bb"], tca_data["vb"]))
 
             plot_pdf(gp_filename)
-
-        print(" DONE", flush=True)
 
 def load_pgm(filename):
     header = None
@@ -899,14 +905,21 @@ def run_tca(complex_tca):
         print("Failed to write sidecar_file: %s" % sidecar_file)
         return
 
-    for path, directories, files in os.walk('tca'):
-        for filename in files:
-            if path != "tca":
-                continue
-            if not is_raw_file(filename):
-                continue
+    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+        result_futures = []
 
-            create_tca_correction(export_path, path, filename, sidecar_file, complex_tca)
+        for path, directories, files in os.walk('tca'):
+            for filename in files:
+                if path != "tca":
+                    continue
+                if not is_raw_file(filename):
+                    continue
+
+                future = executor.submit(create_tca_correction, export_path, path, filename, sidecar_file, complex_tca)
+
+        for f in concurrent.futures.as_completed(result_futures):
+            if f.result():
+                print("OK")
 
     if complex_tca:
         merge_final_pdf("tca.pdf", "tca/exported")
