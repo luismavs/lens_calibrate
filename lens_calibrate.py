@@ -887,6 +887,32 @@ def run_tca(complex_tca):
     if complex_tca:
         merge_final_pdf("tca.pdf", "tca/exported")
 
+def create_vignetting_correction(export_path, path, filename, sidecar_file, distance):
+    # Convert RAW files to NetPGM
+    input_file = os.path.join(path, filename)
+
+    # Read EXIF data
+    exif_data = image_read_exif(input_file)
+
+    # Convert the RAW file to ppm
+    output_file = os.path.join(export_path, ("%s.ppm" % os.path.splitext(filename)[0]))
+    preview_file = os.path.join(export_path, ("%s.jpg" % os.path.splitext(filename)[0]))
+
+    print("Processing %s ... " % (input_file), flush=True)
+
+    output_file = convert_raw_for_vignetting(input_file, sidecar_file, output_file)
+
+    # Create vignetting PGM files (grayscale)
+    pgm_file = convert_ppm_for_vignetting(output_file)
+
+    # Calculate vignetting data
+    calculate_vignetting(pgm_file, input_file, exif_data, distance)
+
+    # Create preview jpg
+    convert_raw_for_vignetting(input_file, sidecar_file, preview_file)
+
+    return True
+
 def run_vignetting():
     if not os.path.isdir("vignetting"):
         print("No vingetting directory, you have to run init first!")
@@ -919,30 +945,9 @@ def run_vignetting():
                 except:
                     continue
 
-            # Convert RAW files to NetPGM
-            input_file = os.path.join(path, filename)
+            create_vignetting_correction(export_path, path, filename, sidecar_file, distance)
 
-            # Read EXIF data
-            exif_data = image_read_exif(input_file)
-
-            # Convert the RAW file to ppm
-            output_file = os.path.join(export_path, ("%s.ppm" % os.path.splitext(filename)[0]))
-            preview_file = os.path.join(export_path, ("%s.jpg" % os.path.splitext(filename)[0]))
-
-            print("Processing %s ... " % (input_file), flush=True)
-
-            output_file = convert_raw_for_vignetting(input_file, sidecar_file, output_file)
-
-            # Create vignetting PGM files (grayscale)
-            pgm_file = convert_ppm_for_vignetting(output_file)
-
-            # Calculate vignetting data
-            calculate_vignetting(pgm_file, input_file, exif_data, distance)
-
-            merge_final_pdf("vignetting.pdf", "vignetting/exported")
-
-            # Create preview jpg
-            convert_raw_for_vignetting(input_file, sidecar_file, preview_file)
+    merge_final_pdf("vignetting.pdf", "vignetting/exported")
 
 def run_generate_xml():
     print("Generating lensfun.xml")
