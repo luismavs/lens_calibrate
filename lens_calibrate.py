@@ -847,7 +847,7 @@ def run_tca(complex_tca):
         os.mkdir(export_path)
 
     sidecar_file = os.path.join(export_path, "tca.xmp")
-    if not write_sidecar_file(sidecar_file, DARKTABLE_DISTORTION_SIDECAR):
+    if not write_sidecar_file(sidecar_file, DARKTABLE_TCA_SIDECAR):
         print("Failed to write sidecar_file: %s" % sidecar_file)
         return
 
