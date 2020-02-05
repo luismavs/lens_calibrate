@@ -1,6 +1,12 @@
 CHANGELOG
 ==========
 
+version 0.2.0 (released 2020-02-05)
+  * Fixed TCA calculations
+  * Updated sidecar files for darktable 3.0
+  * Require darktable >= 3.0.0
+  * Use multiprocessing
+
 version 0.1.1 (released 2019-12-08)
   * Create preview files for vignetting
   * Added vignetting files to the tarball
