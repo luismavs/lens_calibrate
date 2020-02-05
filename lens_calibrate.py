@@ -787,6 +787,15 @@ def init():
           "2. tca        - Put chromatic abbrevation RAW files in here\n"
           "3. vignetting - Put RAW files to calculate vignetting in here\n")
 
+def create_distortion_correction(export_path, path, filename, sidecar_file):
+    input_file = os.path.join(path, filename)
+    output_file = os.path.join(path, "exported", ("%s.tif" % os.path.splitext(filename)[0]))
+
+    # Convert RAW files to TIF for hugin
+    output_file = convert_raw_for_distortion(input_file, sidecar_file, output_file)
+
+    return True
+
 def run_distortion():
     lenses_config_exists = os.path.isfile('lenses.conf')
     lenses_exif_group = {}
@@ -814,7 +823,6 @@ def run_distortion():
                 continue
 
             input_file = os.path.join(path, filename)
-            output_file = os.path.join(path, "exported", ("%s.tif" % os.path.splitext(filename)[0]))
 
             exif_data = image_read_exif(input_file)
             if exif_data is not None:
@@ -826,8 +834,7 @@ def run_distortion():
                 if exif_data['focal_length'] > 1.0:
                     output_file = os.path.join(path, "exported", ("%s_%dmm.tif" % (os.path.splitext(filename)[0], exif_data['focal_length'])))
 
-            # Convert RAW files to TIF for hugin
-            output_file = convert_raw_for_distortion(input_file, sidecar_file, output_file)
+            create_distortion_correction(export_path, path, filename, sidecar_file)
 
     if not lenses_config_exists:
         sorted_lenses_exif_group = {}
