@@ -39,6 +39,7 @@ import configparser
 import codecs
 import re
 import math
+import multiprocessing
 import numpy as np
 import struct
 import subprocess
@@ -305,6 +306,14 @@ DARKTABLE_VIGNETTING_SIDECAR = '''<?xml version="1.0" encoding="UTF-8"?>
  </rdf:RDF>
 </x:xmpmeta>
 '''
+
+def get_max_worker_count():
+    max_workers = int(multiprocessing.cpu_count() / 2)
+
+    if max_workers < 1:
+        return 1
+
+    return max_workers
 
 def is_raw_file(filename):
     raw_file_extensions = [
@@ -854,7 +863,7 @@ def run_distortion():
                     output_file = os.path.join(path, "exported", ("%s_%dmm.tif" % (os.path.splitext(filename)[0], exif_data['focal_length'])))
 
     # Create TIFF for hugin
-    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=get_max_worker_count()) as executor:
         result_futures = []
 
         for path, directories, files in os.walk('distortion'):
@@ -909,7 +918,7 @@ def run_tca(complex_tca):
         print("Failed to write sidecar_file: %s" % sidecar_file)
         return
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=get_max_worker_count()) as executor:
         result_futures = []
 
         for path, directories, files in os.walk('tca'):
@@ -968,7 +977,7 @@ def run_vignetting():
         print("Failed to write sidecar_file: %s" % sidecar_file)
         return
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=get_max_worker_count()) as executor:
         result_futures = []
 
         for path, directories, files in os.walk('vignetting'):
