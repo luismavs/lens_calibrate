@@ -18,7 +18,7 @@ The script needs the following dependencies to be installed on your system:
 * python3-exiv2 ([py3exiv2](http://py3exiv2.tuxfamily.org/) >= 0.2.1)
 * python3-numpy
 * python3-scipy
-* python3-Py2PDF
+* python3-PyPDF2
 * darktable-cli ([darktable](https://darktable.org) >= 3.0.0)
 * tca_correct ([hugin](http://hugin.sourceforge.net) >= 2018)
 * convert ([ImageMagick](https://www.imagemagick.org/script/index.php) or [GraphicsMagick](http://www.graphicsmagick.org))
@@ -41,7 +41,7 @@ install them on your system:
 * Change to directory where lens_calibrate.py is located
 * Setup a virtual env directory using: `python3 -m venv .venv`
 * Source the environment with: `source .venv/bin/activate`
-* Install missing packages with e.g. `pip3 install py3exiv2 numpy scipy Py2PDF`
+* Install missing packages with e.g. `pip3 install py3exiv2 numpy scipy PyPDF2`
 * Run the calibration script like documented below
 
 Running the calibration
