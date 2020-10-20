@@ -50,10 +50,17 @@ import concurrent.futures
 from subprocess import DEVNULL
 from scipy.optimize.minpack import leastsq
 
-from pyexiv2.metadata import ImageMetadata
-from pyexiv2.exif import ExifTag
-
 from PyPDF2 import PdfFileMerger
+
+try:
+    from pyexiv2_reader import image_read_exif as exif_reader
+except ModuleNotFoundError as e:
+    print('Usinf piexif')
+    from piexif_reader import image_read_exif as exif_reader
+
+#define path to exes if they are not in system path  
+DARKTABLE_CLI_PATH = 'darktable-cli'
+TCA_CORRECT_PATH = 'tca_correct'
 
 # Sidecar for loading into hugin
 # Applies a neutral basecurve and enables sharpening
@@ -328,52 +335,10 @@ def has_exif_tag(data, tag):
     return tag in data
 
 def image_read_exif(filename):
-    data = ImageMetadata(filename)
+    
+    exif_dict = exif_reader(filename)
 
-    # This reads the metadata and closes the file
-    data.read()
-
-    lens_model = None
-    tag = 'Exif.Photo.LensModel'
-    if has_exif_tag(data, tag):
-        lens_model = data[tag].value
-    else:
-        tag = 'Exif.NikonLd3.LensIDNumber'
-        if has_exif_tag(data, tag):
-            lens_model = data[tag].human_value
-
-        tag = 'Exif.Panasonic.LensType'
-        if has_exif_tag(data, tag):
-            lens_model = data[tag].value
-
-        tag = 'Exif.Sony1.LensID'
-        if has_exif_tag(data, tag):
-            lens_model = data[tag].human_value
-
-        tag = 'Exif.Minolta.LensID'
-        if has_exif_tag(data, tag):
-            lens_model = data[tag].human_value
-
-    if lens_model is None:
-       lens_model = 'Standard'
-
-    tag = 'Exif.Photo.FocalLength'
-    if has_exif_tag(data, tag):
-        focal_length = float(data[tag].value)
-    else:
-        print("%s doesn't have Exif.Photo.FocalLength set. " % (filename) +
-              "Please fix it manually.")
-
-    tag = 'Exif.Photo.FNumber'
-    if has_exif_tag(data, tag):
-        aperture = float(data[tag].value)
-    else:
-        print("%s doesn't have Exif.Photo.FNumber set. " % (filename) +
-              "Please fix it manually.")
-
-    return { "lens_model" : lens_model,
-             "focal_length" : focal_length,
-             "aperture" : aperture }
+    return exif_dict
 
 def write_sidecar_file(sidecar_file, content):
     if not os.path.isfile(sidecar_file):
@@ -398,7 +363,7 @@ def convert_raw_for_distortion(input_file, sidecar_file, output_file=None):
 
             with open(dt_log_path, 'w') as dt_log_file:
                 cmd = [
-                        "darktable-cli",
+                        DARKTABLE_CLI_PATH,
                         input_file,
                         sidecar_file,
                         output_file,
@@ -433,7 +398,7 @@ def convert_raw_for_tca(input_file, sidecar_file, output_file=None):
 
             with open(dt_log_path, 'w') as dt_log_file:
                 cmd = [
-                        "darktable-cli",
+                        DARKTABLE_CLI_PATH,
                         input_file,
                         sidecar_file,
                         output_file,
@@ -464,7 +429,7 @@ def convert_raw_for_vignetting(input_file, sidecar_file, output_file=None):
 
             with open(dt_log_path, 'w') as dt_log_file:
                 cmd = [
-                        "darktable-cli",
+                        DARKTABLE_CLI_PATH,
                         input_file,
                         sidecar_file,
                         output_file,
@@ -616,7 +581,7 @@ def tca_correct(input_file, original_file, exif_data, complex_tca=False):
         tca_complexity = 'v'
         if complex_tca:
             tca_complexity = 'bv'
-        cmd = [ "tca_correct", "-o", tca_complexity, input_file ]
+        cmd = [ TCA_CORRECT_PATH, "-o", tca_complexity, input_file ]
         try:
             output = subprocess.check_output(cmd, stderr=DEVNULL)
         except subprocess.CalledProcessError:
