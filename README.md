@@ -19,6 +19,13 @@ The script needs the following dependencies to be installed on your system:
 * python3-numpy
 * python3-scipy
 * python3-PyPDF2
+
+Python dependencies can be installed with CLI:
+
+>> pip3 install -r requirements.txt
+
+Which will install piexif library instead of python-exiv2.
+
 * darktable-cli ([darktable](https://darktable.org) >= 3.0.0)
 * tca_correct ([hugin](http://hugin.sourceforge.net) >= 2018)
 * convert ([ImageMagick](https://www.imagemagick.org/script/index.php) or [GraphicsMagick](http://www.graphicsmagick.org))
