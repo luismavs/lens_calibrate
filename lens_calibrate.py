@@ -6,6 +6,7 @@
 #
 # Copyright (c) 2012-2016 Torsten Bronger <bronger@physik.rwth-aachen.de>
 # Copyright (c) 2018-2019 Andreas Schneider <asn@cryptomilk.org>
+# Copyright (c) 2020 Luis Seabra <luismavseabra@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,15 +53,16 @@ from scipy.optimize.minpack import leastsq
 
 from PyPDF2 import PdfFileMerger
 
-try:
-    from pyexiv2_reader import image_read_exif as exif_reader
-except ModuleNotFoundError as e:
-    print('Usinf piexif')
-    from piexif_reader import image_read_exif as exif_reader
+#from pyexiv2_reader import image_read_exif as exif_reader
 
-#define path to exes if they are not in system path  
-DARKTABLE_CLI_PATH = 'darktable-cli'
-TCA_CORRECT_PATH = 'tca_correct'
+from piexif_reader import image_read_exif as exif_reader
+
+#define path to exes if they are not in system path 
+config_app = configparser.ConfigParser()
+config_app.read('config.ini')
+
+DARKTABLE_CLI_PATH = config_app['PATHS']['DARKTABLE_CLI_PATH']
+TCA_CORRECT_PATH = config_app['PATHS']['TCA_CORRECT_PATH']
 
 # Sidecar for loading into hugin
 # Applies a neutral basecurve and enables sharpening

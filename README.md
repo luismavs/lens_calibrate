@@ -1,10 +1,15 @@
 lens_calibrate.py
 =================
 
+Origin
+-------
+
+Forked from repo [https://gitlab.com/cryptomilk/lens_calibrate]https://gitlab.com/cryptomilk/lens_calibrate to use piexif as exif reader instead of pyexiv2. Small minor pythonesque packaging.
+
 Tutorial
 --------
 
-You can find a complete tutorial about lens calibration and the use of the
+You can find Andreas Schneider's complete tutorial about lens calibration and the use of the
 lens_calibrate.py script here:
 
 https://pixls.us/articles/create-lens-calibration-data-for-lensfun/
@@ -12,44 +17,24 @@ https://pixls.us/articles/create-lens-calibration-data-for-lensfun/
 Requirements
 ------------
 
+Python Dependencies can be installed with CLI:
+
+* pip3 install -r requirements.txt
+
 The script needs the following dependencies to be installed on your system:
 
-* python3
-* python3-exiv2 ([py3exiv2](http://py3exiv2.tuxfamily.org/) >= 0.2.1)
-* python3-numpy
-* python3-scipy
-* python3-PyPDF2
-
-Python dependencies can be installed with CLI:
-
->> pip3 install -r requirements.txt
-
-Which will install piexif library instead of python-exiv2.
+Additional Dependencies:
 
 * darktable-cli ([darktable](https://darktable.org) >= 3.0.0)
 * tca_correct ([hugin](http://hugin.sourceforge.net) >= 2018)
 * convert ([ImageMagick](https://www.imagemagick.org/script/index.php) or [GraphicsMagick](http://www.graphicsmagick.org))
 * gnuplot
 
-Packages
---------
 
-Packages for most major distributions are available at:
-
-https://software.opensuse.org/download.html?project=graphics:darktable&package=lens_calibrate
-
-Installing dependencies
+Configuration
 -----------------------
 
-If one of the python modules is not available you can do the following to
-install them on your system:
-
-* Install the packages python3-pip and python3-venv (e.g. with apt-get)
-* Change to directory where lens_calibrate.py is located
-* Setup a virtual env directory using: `python3 -m venv .venv`
-* Source the environment with: `source .venv/bin/activate`
-* Install missing packages with e.g. `pip3 install py3exiv2 numpy scipy PyPDF2`
-* Run the calibration script like documented below
+In config.ini you can specify the path to the darktable and hugin/tca_correct CLI executables in you system.
 
 Running the calibration
 -----------------------

@@ -2,7 +2,7 @@
 
 #######################################################################
 #
-# A script to calibrate camera lenes for lensfun
+# 
 # Exif data reader using pyexiv2
 #
 # Copyright (c) 2012-2016 Torsten Bronger <bronger@physik.rwth-aachen.de>
