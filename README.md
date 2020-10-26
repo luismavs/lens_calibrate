@@ -23,8 +23,6 @@ Python Dependencies can be installed with CLI:
 
 The script needs the following dependencies to be installed on your system:
 
-Additional Dependencies:
-
 * darktable-cli ([darktable](https://darktable.org) >= 3.0.0)
 * tca_correct ([hugin](http://hugin.sourceforge.net) >= 2018)
 * convert ([ImageMagick](https://www.imagemagick.org/script/index.php) or [GraphicsMagick](http://www.graphicsmagick.org))
@@ -117,3 +115,8 @@ With that tarball please open a bug at
 * https://github.com/lensfun/lensfun/issues/
 
 and provide the `lensfun_calibration.tar.xz` file.
+
+To Do
+----------------------------
+
+Add tests with different raw files.

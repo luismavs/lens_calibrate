@@ -1,6 +1,9 @@
 CHANGELOG
 ==========
 
+version 0.2.1 (released 2020-10-26)
+  * Use piexif instead of pyexiv2
+
 version 0.2.0 (released 2020-02-05)
   * Fixed TCA calculations
   * Updated sidecar files for darktable 3.0
